@@ -16,10 +16,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TripleBogey — Golf Trainer",
+  title: "BogeyBoys — Golf Trainer",
   description:
     "Track rounds, stats, handicap, and swing analysis for your golf game.",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "TripleBogey" },
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "BogeyBoys" },
 };
 
 export const viewport: Viewport = {
@@ -28,7 +28,7 @@ export const viewport: Viewport = {
   // Content runs under the Dynamic Island and home indicator; the safe-area
   // padding below keeps it clear of both.
   viewportFit: "cover",
-  themeColor: "#0a0a0a",
+  themeColor: "#0d2318",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -37,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-neutral-950 text-neutral-100">
+      <body className="min-h-full flex flex-col bg-pine-950 text-cream-100">
         <ServiceWorkerRegistrar />
         <NavBar />
         <OfflineBanner />

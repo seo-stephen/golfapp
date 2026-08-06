@@ -16,8 +16,8 @@ function RoundFromQuery() {
   if (!roundId) {
     return (
       <div className="space-y-3">
-        <p className="text-neutral-400">No round selected.</p>
-        <Link href="/rounds" className="text-green-400 underline">
+        <p className="text-cream-400">No round selected.</p>
+        <Link href="/rounds" className="text-kelly-400 underline">
           Back to your rounds
         </Link>
       </div>
@@ -30,7 +30,7 @@ function RoundFromQuery() {
 export default function RoundPage() {
   // useSearchParams needs a Suspense boundary for the page to prerender.
   return (
-    <Suspense fallback={<p className="text-neutral-400">Loading…</p>}>
+    <Suspense fallback={<p className="text-cream-400">Loading…</p>}>
       <RoundFromQuery />
     </Suspense>
   );

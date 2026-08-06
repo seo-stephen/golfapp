@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { BACKUP_VERSION, isBackupFile } from "./backup";
 
 const valid = {
-  app: "triplebogey",
+  app: "bogeyboys",
   version: BACKUP_VERSION,
   exportedAt: "2026-08-05T00:00:00.000Z",
   courses: [],

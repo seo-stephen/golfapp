@@ -5,6 +5,37 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Brand palette, lifted from the BogeyBoys wordmark (pine/cream) with a bold
+   flat kelly green + cap blue in the Malbon reference for accents. Same
+   shade-step numbering as the neutral/green scales they replace, so contrast
+   ratios carry over 1:1. */
+@theme {
+  --color-pine-950: #0d2318;
+  --color-pine-900: #142f21;
+  --color-pine-800: #1c3f2c;
+  --color-pine-700: #2a5439;
+
+  --color-cream-100: #f6f1e2;
+  --color-cream-200: #ece3c9;
+  --color-cream-300: #ddcfa8;
+  --color-cream-400: #bbad8b;
+  --color-cream-500: #998c6f;
+  --color-cream-600: #7a6f58;
+
+  --color-kelly-50: #eaf7ec;
+  --color-kelly-100: #cdedd3;
+  --color-kelly-300: #7dd394;
+  --color-kelly-400: #4abd68;
+  --color-kelly-500: #2fa350;
+  --color-kelly-600: #22853f;
+  --color-kelly-700: #1c6c33;
+  --color-kelly-800: #17552a;
+
+  --color-cap-400: #5b9bd8;
+  --color-cap-500: #3a7dc2;
+  --color-cap-600: #2f68a3;
+}
+
 /* Dark surface is intentional, not a media-query preference — the chart and
    overlay colors are stepped for it. Declared here so form controls, the
    keyboard, and scrollbars match. */
@@ -17,6 +48,13 @@ body {
   -webkit-tap-highlight-color: transparent;
   /* Stop iOS rubber-banding the page behind the fixed tab bar. */
   overscroll-behavior-y: none;
+  /* Faint tiled golf-flag doodle, Malbon-style. The stroke's own alpha (0a ≈
+     4%) carries the "subtle" — a bare opacity property on background-image
+     would fade the whole element, including content, not just the texture. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23f6f1e20a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='60' cy='50' r='10'/%3E%3Cpath d='M60 60v40'/%3E%3Cpath d='M60 65l22 8-22 7z'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  background-attachment: fixed;
 }
 
 /* iOS bumps up font sizes in landscape unless this is pinned. */

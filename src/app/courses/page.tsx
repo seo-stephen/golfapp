@@ -101,7 +101,7 @@ export default function CoursesPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-semibold">Courses</h1>
-        <p className="text-neutral-400 text-sm mt-1">
+        <p className="text-cream-400 text-sm mt-1">
           Search for a course to add to your library, or enter one manually.
         </p>
       </div>
@@ -141,15 +141,15 @@ export default function CoursesPage() {
           {results.map((course) => (
             <div
               key={course.id}
-              className="rounded-lg border border-neutral-800 p-4 flex flex-col gap-2"
+              className="rounded-lg border border-pine-800 p-4 flex flex-col gap-2"
             >
               <div>
                 <div className="font-medium">{course.name}</div>
-                <div className="text-xs text-neutral-500">
+                <div className="text-xs text-cream-500">
                   {[course.city, course.state, course.country].filter(Boolean).join(", ")}
                 </div>
               </div>
-              <div className="text-xs text-neutral-400">
+              <div className="text-xs text-cream-400">
                 {course.tees.map((t) => (
                   <span key={t.name} className="mr-3">
                     {t.name}: {t.rating}/{t.slope}
@@ -174,7 +174,7 @@ export default function CoursesPage() {
             </div>
           ))}
           {results.length === 0 && !searching && !searchFailed && (
-            <p className="text-sm text-neutral-500">No courses found.</p>
+            <p className="text-sm text-cream-500">No courses found.</p>
           )}
         </div>
       </Card>
@@ -191,12 +191,12 @@ export default function CoursesPage() {
           <ManualCourseForm onSaved={() => setShowManualForm(false)} />
         )}
 
-        <ul className="mt-4 divide-y divide-neutral-800">
+        <ul className="mt-4 divide-y divide-pine-800">
           {(savedCourses ?? []).map((c) => (
             <li key={c.id} className="py-3 flex items-center justify-between">
               <div>
                 <div className="font-medium">{c.name}</div>
-                <div className="text-xs text-neutral-500">
+                <div className="text-xs text-cream-500">
                   {[c.city, c.state].filter(Boolean).join(", ")} · {c.tees.length} tee
                   {c.tees.length === 1 ? "" : "s"}
                 </div>
@@ -204,7 +204,7 @@ export default function CoursesPage() {
             </li>
           ))}
           {(savedCourses ?? []).length === 0 && (
-            <p className="text-sm text-neutral-500 py-3">
+            <p className="text-sm text-cream-500 py-3">
               No courses saved yet — search above or add one manually.
             </p>
           )}
@@ -254,29 +254,29 @@ function ManualCourseForm({ onSaved }: { onSaved: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-4 border-t border-neutral-800 pt-4">
+    <form onSubmit={handleSubmit} className="mt-4 space-y-4 border-t border-pine-800 pt-4">
       <div className="grid sm:grid-cols-3 gap-3">
         <label className="text-sm space-y-1">
-          <span className="text-neutral-400">Course name</span>
+          <span className="text-cream-400">Course name</span>
           <Input required value={name} onChange={(e) => setName(e.target.value)} className="w-full" />
         </label>
         <label className="text-sm space-y-1">
-          <span className="text-neutral-400">City</span>
+          <span className="text-cream-400">City</span>
           <Input value={city} onChange={(e) => setCity(e.target.value)} className="w-full" />
         </label>
         <label className="text-sm space-y-1">
-          <span className="text-neutral-400">State</span>
+          <span className="text-cream-400">State</span>
           <Input value={state} onChange={(e) => setState(e.target.value)} className="w-full" />
         </label>
       </div>
 
       <div className="grid sm:grid-cols-3 gap-3">
         <label className="text-sm space-y-1">
-          <span className="text-neutral-400">Tee name</span>
+          <span className="text-cream-400">Tee name</span>
           <Input value={teeName} onChange={(e) => setTeeName(e.target.value)} className="w-full" />
         </label>
         <label className="text-sm space-y-1">
-          <span className="text-neutral-400">Course rating</span>
+          <span className="text-cream-400">Course rating</span>
           <Input
             type="number"
             step="0.1"
@@ -286,7 +286,7 @@ function ManualCourseForm({ onSaved }: { onSaved: () => void }) {
           />
         </label>
         <label className="text-sm space-y-1">
-          <span className="text-neutral-400">Slope rating</span>
+          <span className="text-cream-400">Slope rating</span>
           <Input
             type="number"
             value={slope}
@@ -297,13 +297,13 @@ function ManualCourseForm({ onSaved }: { onSaved: () => void }) {
       </div>
 
       <div>
-        <div className="text-neutral-400 text-sm mb-2">
-          Hole pars <span className="text-neutral-600">(total par {totalPar})</span>
+        <div className="text-cream-400 text-sm mb-2">
+          Hole pars <span className="text-cream-600">(total par {totalPar})</span>
         </div>
         <div className="grid grid-cols-6 sm:grid-cols-9 gap-1.5">
           {pars.map((p, i) => (
             <label key={i} className="text-xs text-center space-y-1">
-              <div className="text-neutral-500">#{i + 1}</div>
+              <div className="text-cream-500">#{i + 1}</div>
               <Input
                 type="number"
                 inputMode="numeric"

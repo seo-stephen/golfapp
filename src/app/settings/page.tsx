@@ -45,15 +45,15 @@ function SwingModelCard() {
   return (
     <Card className="space-y-3">
       <h2 className="font-medium">Swing model — offline</h2>
-      <p className="text-sm text-neutral-400">
+      <p className="text-sm text-cream-400">
         Swing analysis needs a 4.6 MB pose model. It downloads the first time you open
         the swing screen, so grab it before heading somewhere without signal.
       </p>
       <div className="text-sm">
         {cached === null ? (
-          <span className="text-neutral-500">Checking…</span>
+          <span className="text-cream-500">Checking…</span>
         ) : cached ? (
-          <span className="text-green-400">
+          <span className="text-kelly-400">
             Saved for offline use — swing analysis works with no signal.
           </span>
         ) : (
@@ -102,7 +102,7 @@ export default function SettingsPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `triplebogey-backup-${now.toISOString().slice(0, 10)}.json`;
+      a.download = `bogeyboys-backup-${now.toISOString().slice(0, 10)}.json`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -124,7 +124,7 @@ export default function SettingsPage() {
     try {
       const parsed: unknown = JSON.parse(await file.text());
       if (!isBackupFile(parsed)) {
-        throw new Error("That doesn't look like a TripleBogey backup file.");
+        throw new Error("That doesn't look like a BogeyBoys backup file.");
       }
       const result = await restoreBackup(parsed);
       setStatus(
@@ -142,14 +142,14 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="text-neutral-400 text-sm mt-1">
+        <p className="text-cream-400 text-sm mt-1">
           Your data lives only on this device. Back it up.
         </p>
       </div>
 
       <Card className="space-y-3">
         <h2 className="font-medium">Stored on this device</h2>
-        <div className="text-sm text-neutral-400">
+        <div className="text-sm text-cream-400">
           {counts
             ? [
                 plural(counts.rounds, "round"),
@@ -163,7 +163,7 @@ export default function SettingsPage() {
       <Card className="space-y-4">
         <div>
           <h2 className="font-medium">Backup &amp; restore</h2>
-          <p className="text-sm text-neutral-400 mt-1">
+          <p className="text-sm text-cream-400 mt-1">
             Export writes a JSON file of your courses, rounds, and swing metrics. Swing
             <em> videos</em> are not included — they&apos;re large, and the numbers are what
             matter for tracking progress.
@@ -193,7 +193,7 @@ export default function SettingsPage() {
           />
         </div>
 
-        {status && <p className="text-sm text-green-400">{status}</p>}
+        {status && <p className="text-sm text-kelly-400">{status}</p>}
         {error && <p className="text-sm text-red-400">{error}</p>}
       </Card>
 
@@ -207,12 +207,12 @@ export default function SettingsPage() {
           <strong>no rounds at all</strong>. Your data isn&apos;t gone — it&apos;s still in
           Safari — but it does not travel with you automatically.
         </p>
-        <p className="text-sm text-neutral-400">
+        <p className="text-sm text-cream-400">
           To move it across:
         </p>
-        <ol className="text-sm text-neutral-400 list-decimal ml-5 space-y-1">
+        <ol className="text-sm text-cream-400 list-decimal ml-5 space-y-1">
           <li>Export a backup here, in Safari.</li>
-          <li>Add TripleBogey to your Home Screen from the share sheet.</li>
+          <li>Add BogeyBoys to your Home Screen from the share sheet.</li>
           <li>
             Open the Home Screen app <strong>while you still have signal</strong>, so it can
             cache itself for offline use.
@@ -224,7 +224,7 @@ export default function SettingsPage() {
 
       <Card className="space-y-2">
         <h2 className="font-medium">Why back up at all</h2>
-        <p className="text-sm text-neutral-400">
+        <p className="text-sm text-cream-400">
           Safari clears a site&apos;s storage after about seven days without a visit, and
           that sweep takes the rounds, the offline cache, and the handicap with it.
           Installing to the Home Screen exempts the app from that cleanup, which is the

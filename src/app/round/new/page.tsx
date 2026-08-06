@@ -39,16 +39,16 @@ export default function NewRoundPage() {
     <div className="max-w-lg space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Start a round</h1>
-        <p className="text-neutral-400 text-sm mt-1">
+        <p className="text-cream-400 text-sm mt-1">
           Pick a course and tee to begin tracking your scorecard.
         </p>
       </div>
 
       <Card className="space-y-4">
         {(courses ?? []).length === 0 ? (
-          <p className="text-sm text-neutral-400">
+          <p className="text-sm text-cream-400">
             You don&apos;t have any saved courses yet. Add one on the{" "}
-            <a href="/courses" className="text-green-400 underline">
+            <a href="/courses" className="text-kelly-400 underline">
               Courses
             </a>{" "}
             page first.
@@ -56,7 +56,7 @@ export default function NewRoundPage() {
         ) : (
           <>
             <label className="block text-sm space-y-1">
-              <span className="text-neutral-400">Course</span>
+              <span className="text-cream-400">Course</span>
               <Select
                 className="w-full"
                 value={courseId}
@@ -76,7 +76,7 @@ export default function NewRoundPage() {
 
             {selectedCourse && selectedCourse.tees.length > 0 && (
               <label className="block text-sm space-y-1">
-                <span className="text-neutral-400">Tee</span>
+                <span className="text-cream-400">Tee</span>
                 <Select
                   className="w-full"
                   value={teeName || selectedCourse.tees[0].name}

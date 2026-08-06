@@ -1,13 +1,13 @@
 import Dexie, { type EntityTable } from "dexie";
 import type { Course, Round, SwingSession } from "@/types";
 
-class TripleBogeyDB extends Dexie {
+class BogeyBoysDB extends Dexie {
   courses!: EntityTable<Course, "id">;
   rounds!: EntityTable<Round, "id">;
   swingSessions!: EntityTable<SwingSession, "id">;
 
   constructor() {
-    super("triplebogey");
+    super("bogeyboys");
 
     this.version(1).stores({
       courses: "id, name, source, createdAt",
@@ -28,10 +28,10 @@ class TripleBogeyDB extends Dexie {
 
 // IndexedDB only exists in the browser; pages that touch this must be
 // client components, but guard construction anyway for SSR safety.
-export const db: TripleBogeyDB | null =
-  typeof window !== "undefined" ? new TripleBogeyDB() : null;
+export const db: BogeyBoysDB | null =
+  typeof window !== "undefined" ? new BogeyBoysDB() : null;
 
-export function requireDb(): TripleBogeyDB {
+export function requireDb(): BogeyBoysDB {
   if (!db) {
     throw new Error("Database is only available in the browser");
   }

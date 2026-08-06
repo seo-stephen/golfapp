@@ -13,8 +13,8 @@ function SwingFromQuery() {
   if (!sessionId) {
     return (
       <div className="space-y-3">
-        <p className="text-neutral-400">No swing session selected.</p>
-        <Link href="/swing" className="text-green-400 underline">
+        <p className="text-cream-400">No swing session selected.</p>
+        <Link href="/swing" className="text-kelly-400 underline">
           Back to swing analysis
         </Link>
       </div>
@@ -26,7 +26,7 @@ function SwingFromQuery() {
 
 export default function SwingSessionPage() {
   return (
-    <Suspense fallback={<p className="text-neutral-400">Loading…</p>}>
+    <Suspense fallback={<p className="text-cream-400">Loading…</p>}>
       <SwingFromQuery />
     </Suspense>
   );

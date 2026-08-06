@@ -38,8 +38,8 @@ export default function SwingDetail({ sessionId }: { sessionId: string }) {
   // instead of floating in a corner of the source frame's coordinate space.
   const bounds = useMemo(() => keypointBounds(frames), [frames]);
 
-  if (session === undefined) return <p className="text-neutral-400">Loading…</p>;
-  if (session === null) return <p className="text-neutral-400">Session not found.</p>;
+  if (session === undefined) return <p className="text-cream-400">Loading…</p>;
+  if (session === null) return <p className="text-cream-400">Session not found.</p>;
 
   const m = session.metrics;
   const currentFrame = frames[Math.min(frameIdx, frames.length - 1)];
@@ -67,7 +67,7 @@ export default function SwingDetail({ sessionId }: { sessionId: string }) {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Swing session</h1>
-        <p className="text-neutral-400 text-sm mt-1">
+        <p className="text-cream-400 text-sm mt-1">
           {new Date(session.date).toLocaleString()} ·{" "}
           {(session.durationMs / 1000).toFixed(1)}s · {frames.length} frames
         </p>
@@ -126,7 +126,7 @@ export default function SwingDetail({ sessionId }: { sessionId: string }) {
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <h2 className="font-medium">Pose scrubber</h2>
           {phaseLabel && (
-            <span className="text-xs px-2 py-1 rounded bg-green-500/20 text-green-300">
+            <span className="text-xs px-2 py-1 rounded bg-kelly-500/20 text-kelly-300">
               {phaseLabel}
             </span>
           )}
@@ -142,7 +142,7 @@ export default function SwingDetail({ sessionId }: { sessionId: string }) {
               <PoseOverlay frame={currentFrame} scale={bounds.height} />
             </svg>
           ) : (
-            <div className="aspect-[3/4] grid place-items-center text-sm text-neutral-500">
+            <div className="aspect-[3/4] grid place-items-center text-sm text-cream-500">
               No pose frames captured.
             </div>
           )}
@@ -156,10 +156,10 @@ export default function SwingDetail({ sessionId }: { sessionId: string }) {
               max={frames.length - 1}
               value={frameIdx}
               onChange={(e) => setFrameIdx(parseInt(e.target.value, 10))}
-              className="w-full h-11 accent-green-500"
+              className="w-full h-11 accent-kelly-500"
               aria-label="Swing frame"
             />
-            <div className="flex justify-between text-xs text-neutral-500">
+            <div className="flex justify-between text-xs text-cream-500">
               <span>
                 frame {frameIdx + 1} / {frames.length}
               </span>
@@ -190,7 +190,7 @@ export default function SwingDetail({ sessionId }: { sessionId: string }) {
         Delete session
       </Button>
 
-      <p className="text-xs text-neutral-500">
+      <p className="text-xs text-cream-500">
         Heuristic estimates from 2D keypoints on a single camera view — best for comparing
         your own swings over time rather than as absolute measurements.
       </p>

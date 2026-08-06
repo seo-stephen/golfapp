@@ -40,10 +40,10 @@ export default function Dashboard() {
     <div className="space-y-8">
       <div className="flex items-end justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold">
-            Welcome to <span className="text-green-400">TripleBogey</span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight">
+            Welcome to Bogey<span className="text-kelly-400">Boys</span>
           </h1>
-          <p className="text-neutral-400 text-sm mt-1">
+          <p className="text-cream-400 text-sm mt-1">
             Track your rounds, watch your handicap move, and analyze your swing.
           </p>
         </div>
@@ -67,7 +67,7 @@ export default function Dashboard() {
           Screen app to its start_url after it has been backgrounded, so every
           time the phone locks mid-round the golfer lands back here. */}
       {inProgress.length > 0 && (
-        <Card className="border-green-600/50 bg-green-500/5">
+        <Card className="border-kelly-600/50 bg-kelly-500/5">
           <h2 className="font-medium mb-3">Continue your round</h2>
           <ul className="space-y-2">
             {inProgress.map((r) => {
@@ -78,10 +78,10 @@ export default function Dashboard() {
                 <li key={r.id}>
                   <Link
                     href={`/round?id=${r.id}`}
-                    className="flex items-center justify-between gap-3 rounded-lg bg-green-600 active:bg-green-700 sm:hover:bg-green-500 text-white px-4 py-3 min-h-14"
+                    className="flex items-center justify-between gap-3 rounded-lg bg-kelly-600 active:bg-kelly-700 sm:hover:bg-kelly-500 text-white px-4 py-3 min-h-14"
                   >
                     <span className="font-medium">{r.courseName}</span>
-                    <span className="text-sm text-green-50/90 text-right shrink-0">
+                    <span className="text-sm text-kelly-50/90 text-right shrink-0">
                       {played === 0 ? "Start hole 1" : `Hole ${nextHole} · ${played}/18`}
                     </span>
                   </Link>
@@ -95,25 +95,25 @@ export default function Dashboard() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <h2 className="font-medium mb-3">Recent rounds</h2>
-          <ul className="divide-y divide-neutral-800">
+          <ul className="divide-y divide-pine-800">
             {recent.map((r) => {
               const strokes = r.holeScores.reduce((s, h) => s + (h.strokes ?? 0), 0);
               return (
                 <li key={r.id} className="py-2">
                   <Link
                     href={`/round?id=${r.id}`}
-                    className="flex justify-between text-sm hover:text-green-400"
+                    className="flex justify-between text-sm hover:text-kelly-400"
                   >
                     <span>{r.courseName}</span>
-                    <span className="text-neutral-400">{strokes || "—"}</span>
+                    <span className="text-cream-400">{strokes || "—"}</span>
                   </Link>
                 </li>
               );
             })}
             {recent.length === 0 && (
-              <p className="text-sm text-neutral-500 py-2">
+              <p className="text-sm text-cream-500 py-2">
                 No rounds yet. Add a course on the{" "}
-                <Link href="/courses" className="text-green-400 underline">
+                <Link href="/courses" className="text-kelly-400 underline">
                   Courses
                 </Link>{" "}
                 page, then start a round.
@@ -124,7 +124,7 @@ export default function Dashboard() {
 
         <Card>
           <h2 className="font-medium mb-3">Swing trainer</h2>
-          <p className="text-sm text-neutral-400">
+          <p className="text-sm text-cream-400">
             Prop your phone up side-on and record a swing. Tempo, spine tilt, and head
             sway are estimated on-device — nothing is uploaded.
           </p>

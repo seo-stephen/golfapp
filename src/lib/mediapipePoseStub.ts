@@ -6,7 +6,7 @@
 export class Pose {
   constructor() {
     throw new Error(
-      "The BlazePose MediaPipe runtime is not bundled in this app — TripleBogey uses MoveNet."
+      "The BlazePose MediaPipe runtime is not bundled in this app — BogeyBoys uses MoveNet."
     );
   }
 }

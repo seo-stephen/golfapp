@@ -27,7 +27,7 @@ export function TrendChart({
 
   if (data.length === 0) {
     return (
-      <div className="text-sm text-neutral-500 flex items-center justify-center py-10">
+      <div className="text-sm text-cream-500 flex items-center justify-center py-10">
         Not enough rounds yet.
       </div>
     );

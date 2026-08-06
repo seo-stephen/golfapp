@@ -8,7 +8,7 @@ import type { Course, Round, SwingSession } from "@/types";
 export const BACKUP_VERSION = 1;
 
 export interface BackupFile {
-  app: "triplebogey";
+  app: "bogeyboys";
   version: number;
   exportedAt: string;
   courses: Course[];
@@ -26,7 +26,7 @@ export async function buildBackup(exportedAt: string): Promise<BackupFile> {
   ]);
 
   return {
-    app: "triplebogey",
+    app: "bogeyboys",
     version: BACKUP_VERSION,
     exportedAt,
     courses,
@@ -49,7 +49,7 @@ export function isBackupFile(value: unknown): value is BackupFile {
   if (typeof value !== "object" || value === null) return false;
   const v = value as Record<string, unknown>;
   return (
-    v.app === "triplebogey" &&
+    v.app === "bogeyboys" &&
     typeof v.version === "number" &&
     Array.isArray(v.courses) &&
     Array.isArray(v.rounds)
@@ -70,7 +70,7 @@ export async function restoreBackup(backup: BackupFile): Promise<RestoreResult> 
   const db = requireDb();
   if (backup.version > BACKUP_VERSION) {
     throw new Error(
-      `This backup was written by a newer version of TripleBogey (v${backup.version}).`
+      `This backup was written by a newer version of BogeyBoys (v${backup.version}).`
     );
   }
 

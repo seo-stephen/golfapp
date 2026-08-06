@@ -35,10 +35,10 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
   const [showAll, setShowAll] = useState(false);
 
   if (round === undefined) {
-    return <p className="text-neutral-400">Loading…</p>;
+    return <p className="text-cream-400">Loading…</p>;
   }
   if (round === null) {
-    return <p className="text-neutral-400">Round not found.</p>;
+    return <p className="text-cream-400">Round not found.</p>;
   }
 
   const enteredHoles = round.holeScores.filter((h) => h.strokes != null);
@@ -65,9 +65,9 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
     <div className="space-y-5">
       <div>
         <h1 className="text-xl sm:text-2xl font-semibold">{round.courseName}</h1>
-        <p className="text-neutral-400 text-sm mt-0.5">
+        <p className="text-cream-400 text-sm mt-0.5">
           {round.teeName} tee · {new Date(round.date).toLocaleDateString()}
-          {round.completed && <span className="ml-2 text-green-400">· Completed</span>}
+          {round.completed && <span className="ml-2 text-kelly-400">· Completed</span>}
         </p>
       </div>
 
@@ -101,7 +101,7 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
               ←
             </Button>
             <div className="text-center">
-              <div className="text-xs uppercase tracking-wide text-neutral-500">
+              <div className="text-xs uppercase tracking-wide text-cream-500">
                 Hole {currentHole.number}
               </div>
               <div className="text-lg font-semibold">Par {currentHole.par}</div>
@@ -155,17 +155,17 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
                 onClick={() => setHoleIdx(i)}
                 className={`aspect-square rounded-md text-xs font-medium flex flex-col items-center justify-center ${
                   i === holeIdx
-                    ? "ring-2 ring-green-500 bg-neutral-800"
+                    ? "ring-2 ring-kelly-500 bg-pine-800"
                     : entered
                       ? vsPar > 0
                         ? "bg-red-900/50 text-red-100"
                         : vsPar < 0
-                          ? "bg-green-800/60 text-green-100"
-                          : "bg-neutral-800 text-neutral-200"
-                      : "bg-neutral-900 border border-neutral-800 text-neutral-500"
+                          ? "bg-kelly-800/60 text-kelly-100"
+                          : "bg-pine-800 text-cream-200"
+                      : "bg-pine-900 border border-pine-800 text-cream-500"
                 }`}
               >
-                <span className="text-[10px] text-neutral-400">{h.number}</span>
+                <span className="text-[10px] text-cream-400">{h.number}</span>
                 <span>{entered ? h.strokes : "–"}</span>
               </button>
             );
@@ -204,9 +204,9 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
       </div>
 
       {round.completed && round.differential != null && (
-        <p className="text-sm text-neutral-400">
+        <p className="text-sm text-cream-400">
           Score differential for this round:{" "}
-          <span className="text-neutral-100">{round.differential}</span>
+          <span className="text-cream-100">{round.differential}</span>
         </p>
       )}
       {round.completed && round.differential == null && (
@@ -217,7 +217,7 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
         </p>
       )}
       {!round.completed && !isScoreComplete(round) && (
-        <p className="text-xs text-neutral-500">
+        <p className="text-xs text-cream-500">
           {enteredHoles.length}/18 holes entered.
         </p>
       )}
@@ -227,8 +227,8 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
 
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 px-3 py-2">
-      <div className="text-[11px] uppercase tracking-wide text-neutral-500">{label}</div>
+    <div className="rounded-lg border border-pine-800 bg-pine-900/60 px-3 py-2">
+      <div className="text-[11px] uppercase tracking-wide text-cream-500">{label}</div>
       <div className="text-lg sm:text-xl font-semibold mt-0.5">{value}</div>
     </div>
   );
@@ -247,7 +247,7 @@ function StepperRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <span className="text-sm text-neutral-300">{label}</span>
+      <span className="text-sm text-cream-300">{label}</span>
       <div className="flex items-center gap-2">
         {/* +/- go through onBump so the delta is applied to the stored value,
             not to whatever this render happened to show. */}
@@ -267,7 +267,7 @@ function StepperRow({
           onChange={(e) =>
             onSet(e.target.value === "" ? null : parseInt(e.target.value, 10))
           }
-          className="w-16 text-center bg-neutral-900 border border-neutral-700 rounded-lg min-h-11 text-base focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="w-16 text-center bg-pine-900 border border-pine-700 rounded-lg min-h-11 text-base focus:outline-none focus:ring-2 focus:ring-kelly-500"
           aria-label={label}
         />
         <Button
@@ -299,7 +299,7 @@ function ToggleRow({
   ];
   return (
     <div className="flex items-center justify-between gap-3">
-      <span className="text-sm text-neutral-300">{label}</span>
+      <span className="text-sm text-cream-300">{label}</span>
       <div className="flex gap-1.5">
         {options.map((o) => {
           const active = value === o.v;
@@ -310,11 +310,11 @@ function ToggleRow({
               className={`min-w-14 min-h-11 px-3 rounded-lg text-sm font-medium ${
                 active
                   ? o.v === true
-                    ? "bg-green-600 text-white"
+                    ? "bg-kelly-600 text-white"
                     : o.v === false
                       ? "bg-red-900/70 text-red-100"
-                      : "bg-neutral-700 text-neutral-200"
-                  : "bg-neutral-800 text-neutral-400"
+                      : "bg-pine-700 text-cream-200"
+                  : "bg-pine-800 text-cream-400"
               }`}
             >
               {o.text}
@@ -340,11 +340,11 @@ function HoleTable({
 
   return (
     <table className="w-full text-sm min-w-[560px]">
-      <caption className="text-left text-neutral-400 mb-2 caption-top">
-        {title} <span className="text-neutral-600">· par {par}</span>
+      <caption className="text-left text-cream-400 mb-2 caption-top">
+        {title} <span className="text-cream-600">· par {par}</span>
       </caption>
       <thead>
-        <tr className="text-neutral-500 text-xs uppercase">
+        <tr className="text-cream-500 text-xs uppercase">
           <th className="text-left font-medium py-1 pr-2">Hole</th>
           <th className="text-left font-medium py-1 pr-2">Par</th>
           <th className="text-left font-medium py-1 pr-2">Strokes</th>
@@ -355,9 +355,9 @@ function HoleTable({
       </thead>
       <tbody>
         {holes.map((h) => (
-          <tr key={h.number} className="border-t border-neutral-800">
+          <tr key={h.number} className="border-t border-pine-800">
             <td className="py-1.5 pr-2">{h.number}</td>
-            <td className="py-1.5 pr-2 text-neutral-400">{h.par}</td>
+            <td className="py-1.5 pr-2 text-cream-400">{h.par}</td>
             <td className="py-1.5 pr-2">
               <NumberCell
                 value={h.strokes}
@@ -372,7 +372,7 @@ function HoleTable({
             </td>
             <td className="py-1.5 pr-2">
               {h.par === 3 ? (
-                <span className="text-neutral-600">n/a</span>
+                <span className="text-cream-600">n/a</span>
               ) : (
                 <TriToggle
                   value={h.fairwayHit}
@@ -388,9 +388,9 @@ function HoleTable({
             </td>
           </tr>
         ))}
-        <tr className="border-t border-neutral-700 font-medium">
+        <tr className="border-t border-pine-700 font-medium">
           <td className="py-1.5 pr-2">Tot</td>
-          <td className="py-1.5 pr-2 text-neutral-400">{par}</td>
+          <td className="py-1.5 pr-2 text-cream-400">{par}</td>
           <td className="py-1.5 pr-2">{strokes || "—"}</td>
           <td className="py-1.5 pr-2">
             {holes.reduce((s, h) => s + (h.putts ?? 0), 0) || "—"}
@@ -418,7 +418,7 @@ function NumberCell({
       onChange={(e) =>
         onChange(e.target.value === "" ? null : parseInt(e.target.value, 10))
       }
-      className="w-16 bg-neutral-900 border border-neutral-700 rounded px-2 py-1.5 text-base focus:outline-none focus:ring-2 focus:ring-green-500"
+      className="w-16 bg-pine-900 border border-pine-700 rounded px-2 py-1.5 text-base focus:outline-none focus:ring-2 focus:ring-kelly-500"
     />
   );
 }
@@ -436,9 +436,9 @@ function TriToggle({
   const label = value === null ? "—" : value ? "Y" : "N";
   const color =
     value === null
-      ? "bg-neutral-800 text-neutral-500"
+      ? "bg-pine-800 text-cream-500"
       : value
-        ? "bg-green-600 text-white"
+        ? "bg-kelly-600 text-white"
         : "bg-red-900/60 text-red-200";
   return (
     <button type="button" onClick={cycle} className={`w-10 h-9 rounded text-xs font-medium ${color}`}>

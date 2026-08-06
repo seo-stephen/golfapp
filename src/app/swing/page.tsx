@@ -212,7 +212,7 @@ export default function SwingPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Swing analysis</h1>
-        <p className="text-neutral-400 text-sm mt-1">
+        <p className="text-cream-400 text-sm mt-1">
           Prop your phone up side-on with your full body in frame. Pose tracking runs on
           your device — nothing is uploaded.
         </p>
@@ -228,7 +228,7 @@ export default function SwingPage() {
             className="w-full h-full object-cover"
           />
           {stage === "idle" && (
-            <div className="absolute inset-0 grid place-items-center text-sm text-neutral-400 px-6 text-center">
+            <div className="absolute inset-0 grid place-items-center text-sm text-cream-400 px-6 text-center">
               {modelReady ? "Camera off" : "Loading pose model…"}
             </div>
           )}
@@ -290,7 +290,7 @@ export default function SwingPage() {
 
         {error && <p className="text-sm text-red-400">{error}</p>}
 
-        <p className="text-xs text-neutral-500 border-t border-neutral-800 pt-3">
+        <p className="text-xs text-cream-500 border-t border-pine-800 pt-3">
           Metrics are heuristic estimates from 2D body keypoints on a single camera view —
           useful for tracking trends in your own swing, not a substitute for professional
           biomechanical analysis or a coach.
@@ -299,7 +299,7 @@ export default function SwingPage() {
 
       <Card>
         <h2 className="font-medium mb-3">Past sessions</h2>
-        <ul className="divide-y divide-neutral-800">
+        <ul className="divide-y divide-pine-800">
           {(sessions ?? []).map((s) => (
             <li key={s.id}>
               <Link
@@ -310,18 +310,18 @@ export default function SwingPage() {
                   <div className="font-medium text-sm">
                     {new Date(s.date).toLocaleString()}
                   </div>
-                  <div className="text-xs text-neutral-500">
+                  <div className="text-xs text-cream-500">
                     {(s.durationMs / 1000).toFixed(1)}s · {s.frames.length} frames
                   </div>
                 </div>
-                <div className="text-sm text-neutral-400">
+                <div className="text-sm text-cream-400">
                   {s.metrics.tempoRatio != null ? `${s.metrics.tempoRatio}:1` : "—"}
                 </div>
               </Link>
             </li>
           ))}
           {(sessions ?? []).length === 0 && (
-            <p className="text-sm text-neutral-500 py-3">No swing sessions yet.</p>
+            <p className="text-sm text-cream-500 py-3">No swing sessions yet.</p>
           )}
         </ul>
       </Card>

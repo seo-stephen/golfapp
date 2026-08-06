@@ -90,7 +90,7 @@ export default function StatsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Stats</h1>
-        <p className="text-neutral-400 text-sm mt-1">
+        <p className="text-cream-400 text-sm mt-1">
           Based on {completed.length} completed round{completed.length === 1 ? "" : "s"}.
         </p>
       </div>
@@ -122,7 +122,7 @@ export default function StatsPage() {
       </Card>
 
       {completed.length === 0 && (
-        <p className="text-sm text-neutral-500">
+        <p className="text-sm text-cream-500">
           Finish a round to start seeing stats here.
         </p>
       )}

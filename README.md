@@ -1,4 +1,4 @@
-# TripleBogey
+# BogeyBoys
 
 A golf trainer web app: digital scorecard, round history, stats, WHS-style handicap
 index, and in-browser webcam swing analysis.
