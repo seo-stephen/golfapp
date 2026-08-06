@@ -1,11 +1,12 @@
 import Dexie, { type EntityTable } from "dexie";
-import type { Course, Round, Shot, SwingSession } from "@/types";
+import type { Course, PuttingSession, Round, Shot, SwingSession } from "@/types";
 
 class BogeyBoysDB extends Dexie {
   courses!: EntityTable<Course, "id">;
   rounds!: EntityTable<Round, "id">;
   swingSessions!: EntityTable<SwingSession, "id">;
   shots!: EntityTable<Shot, "id">;
+  puttingSessions!: EntityTable<PuttingSession, "id">;
 
   constructor() {
     super("bogeyboys");
@@ -29,6 +30,11 @@ class BogeyBoysDB extends Dexie {
     // it lives inside the `rounds` records themselves, not as an index.
     this.version(3).stores({
       shots: "id, date, club, createdAt",
+    });
+
+    // v4 adds putting-practice sessions.
+    this.version(4).stores({
+      puttingSessions: "id, date, distanceFt, createdAt",
     });
   }
 }

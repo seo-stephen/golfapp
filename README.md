@@ -75,6 +75,8 @@ the route falls back to sample data rather than erroring.
 - **Yardages** (`/yardages`) — log club, distance, and shot result from the range or an
   approach shot; builds a personal yardage book (avg/min/max distance per club) over
   time instead of guessing carry distances.
+- **Putting** (`/putting`) — tally makes/misses from a chosen distance (a putting mat at
+  home, say) and track made % per distance over time on a trend chart.
 - **Swing analysis** (`/swing`) — record a swing with your camera; MoveNet pose
   detection runs locally to estimate swing tempo, spine tilt at address, and head sway,
   with a frame-by-frame skeleton scrubber.

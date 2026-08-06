@@ -12,7 +12,7 @@ import {
   isScoreComplete,
   updateRoundHole,
 } from "@/lib/repo";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, Stepper } from "@/components/ui";
 import type { HoleScore } from "@/types";
 
 function toPar(total: number, par: number) {
@@ -125,19 +125,19 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
             </Button>
           </div>
 
-          <StepperRow
+          <Stepper
             label="Strokes"
             value={currentHole.strokes}
             onSet={(v) => updateRoundHole(roundId, currentHole.number, { strokes: v })}
             onBump={(d) => bumpRoundHole(roundId, currentHole.number, "strokes", d)}
           />
-          <StepperRow
+          <Stepper
             label="Putts"
             value={currentHole.putts}
             onSet={(v) => updateRoundHole(roundId, currentHole.number, { putts: v })}
             onBump={(d) => bumpRoundHole(roundId, currentHole.number, "putts", d)}
           />
-          <StepperRow
+          <Stepper
             label="Penalties"
             value={currentHole.penalties}
             onSet={(v) => updateRoundHole(roundId, currentHole.number, { penalties: v })}
@@ -245,55 +245,6 @@ function Stat({ label, value }: { label: string; value: React.ReactNode }) {
     <div className="rounded-lg border border-pine-800 bg-pine-900/60 px-3 py-2">
       <div className="text-[11px] uppercase tracking-wide text-cream-500">{label}</div>
       <div className="text-lg sm:text-xl font-semibold mt-0.5">{value}</div>
-    </div>
-  );
-}
-
-function StepperRow({
-  label,
-  value,
-  onSet,
-  onBump,
-}: {
-  label: string;
-  value: number | null;
-  onSet: (v: number | null) => void;
-  onBump: (delta: number) => void;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <span className="text-sm text-cream-300">{label}</span>
-      <div className="flex items-center gap-2">
-        {/* +/- go through onBump so the delta is applied to the stored value,
-            not to whatever this render happened to show. */}
-        <Button
-          variant="secondary"
-          className="w-12"
-          onClick={() => onBump(-1)}
-          aria-label={`Decrease ${label}`}
-        >
-          −
-        </Button>
-        <input
-          type="number"
-          inputMode="numeric"
-          min={0}
-          value={value ?? ""}
-          onChange={(e) =>
-            onSet(e.target.value === "" ? null : parseInt(e.target.value, 10))
-          }
-          className="w-16 text-center bg-pine-900 border border-pine-700 rounded-lg min-h-11 text-base focus:outline-none focus:ring-2 focus:ring-kelly-500"
-          aria-label={label}
-        />
-        <Button
-          variant="secondary"
-          className="w-12"
-          onClick={() => onBump(1)}
-          aria-label={`Increase ${label}`}
-        >
-          +
-        </Button>
-      </div>
     </div>
   );
 }

@@ -66,6 +66,54 @@ export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
   );
 }
 
+/** Big +/− tap counter — used for live scorecard entry and putting-mat tallies. */
+export function Stepper({
+  label,
+  value,
+  onSet,
+  onBump,
+}: {
+  label: string;
+  value: number | null;
+  onSet: (v: number | null) => void;
+  onBump: (delta: number) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-sm text-cream-300">{label}</span>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="secondary"
+          className="w-12"
+          onClick={() => onBump(-1)}
+          aria-label={`Decrease ${label}`}
+        >
+          −
+        </Button>
+        <input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          value={value ?? ""}
+          onChange={(e) =>
+            onSet(e.target.value === "" ? null : parseInt(e.target.value, 10))
+          }
+          className="w-16 text-center bg-pine-900 border-2 border-pine-700 rounded-xl min-h-11 text-base focus:outline-none focus:ring-2 focus:ring-kelly-500"
+          aria-label={label}
+        />
+        <Button
+          variant="secondary"
+          className="w-12"
+          onClick={() => onBump(1)}
+          aria-label={`Increase ${label}`}
+        >
+          +
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export function StatTile({
   label,
   value,

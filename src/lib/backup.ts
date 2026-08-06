@@ -1,5 +1,5 @@
 import { requireDb } from "@/lib/db";
-import type { Course, Round, Shot, SwingSession } from "@/types";
+import type { Course, PuttingSession, Round, Shot, SwingSession } from "@/types";
 
 // Everything lives in IndexedDB, which iOS Safari will evict after ~7 days of
 // no interaction unless the app is installed to the Home Screen. A season of
@@ -17,15 +17,18 @@ export interface BackupFile {
   swingSessions: Omit<SwingSession, "videoBlob">[];
   /** Optional: absent in backups written before the yardage book existed. */
   shots?: Shot[];
+  /** Optional: absent in backups written before putting practice existed. */
+  puttingSessions?: PuttingSession[];
 }
 
 export async function buildBackup(exportedAt: string): Promise<BackupFile> {
   const db = requireDb();
-  const [courses, rounds, sessions, shots] = await Promise.all([
+  const [courses, rounds, sessions, shots, puttingSessions] = await Promise.all([
     db.courses.toArray(),
     db.rounds.toArray(),
     db.swingSessions.toArray(),
     db.shots.toArray(),
+    db.puttingSessions.toArray(),
   ]);
 
   return {
@@ -46,6 +49,7 @@ export async function buildBackup(exportedAt: string): Promise<BackupFile> {
       createdAt: s.createdAt,
     })),
     shots,
+    puttingSessions,
   };
 }
 
@@ -65,6 +69,7 @@ export interface RestoreResult {
   rounds: number;
   swingSessions: number;
   shots: number;
+  puttingSessions: number;
 }
 
 /**
@@ -85,6 +90,7 @@ export async function restoreBackup(backup: BackupFile): Promise<RestoreResult> 
     videoBlob: new Blob([], { type: "video/mp4" }),
   })) as SwingSession[];
   const shots = backup.shots ?? [];
+  const puttingSessions = backup.puttingSessions ?? [];
 
   await db.transaction(
     "rw",
@@ -92,11 +98,13 @@ export async function restoreBackup(backup: BackupFile): Promise<RestoreResult> 
     db.rounds,
     db.swingSessions,
     db.shots,
+    db.puttingSessions,
     async () => {
       if (backup.courses.length) await db.courses.bulkPut(backup.courses);
       if (backup.rounds.length) await db.rounds.bulkPut(backup.rounds);
       if (sessions.length) await db.swingSessions.bulkPut(sessions);
       if (shots.length) await db.shots.bulkPut(shots);
+      if (puttingSessions.length) await db.puttingSessions.bulkPut(puttingSessions);
     }
   );
 
@@ -105,5 +113,6 @@ export async function restoreBackup(backup: BackupFile): Promise<RestoreResult> 
     rounds: backup.rounds.length,
     swingSessions: sessions.length,
     shots: shots.length,
+    puttingSessions: puttingSessions.length,
   };
 }

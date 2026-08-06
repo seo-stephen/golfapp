@@ -1,7 +1,16 @@
 import { v4 as uuid } from "uuid";
 import { requireDb } from "@/lib/db";
 import { computeDifferential } from "@/lib/handicap";
-import type { Course, HoleScore, Round, Shot, ShotResult, SwingSession, Tee } from "@/types";
+import type {
+  Course,
+  HoleScore,
+  PuttingSession,
+  Round,
+  Shot,
+  ShotResult,
+  SwingSession,
+  Tee,
+} from "@/types";
 
 export function emptyHoleScores(holes: Course["holes"]): HoleScore[] {
   return holes
@@ -210,4 +219,30 @@ export async function listShots(): Promise<Shot[]> {
 export async function deleteShot(id: string): Promise<void> {
   const db = requireDb();
   await db.shots.delete(id);
+}
+
+export async function logPuttingSession(input: {
+  distanceFt: number;
+  attempts: number;
+  makes: number;
+}): Promise<PuttingSession> {
+  const db = requireDb();
+  const session: PuttingSession = {
+    ...input,
+    id: uuid(),
+    date: Date.now(),
+    createdAt: Date.now(),
+  };
+  await db.puttingSessions.put(session);
+  return session;
+}
+
+export async function listPuttingSessions(): Promise<PuttingSession[]> {
+  const db = requireDb();
+  return db.puttingSessions.orderBy("date").reverse().toArray();
+}
+
+export async function deletePuttingSession(id: string): Promise<void> {
+  const db = requireDb();
+  await db.puttingSessions.delete(id);
 }

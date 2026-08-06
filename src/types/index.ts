@@ -100,3 +100,13 @@ export interface Shot {
   result: ShotResult | null;
   createdAt: number;
 }
+
+/** One logged putting-practice session at a single distance. */
+export interface PuttingSession {
+  id: string;
+  date: number;
+  distanceFt: number;
+  attempts: number;
+  makes: number;
+  createdAt: number;
+}
