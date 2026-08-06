@@ -50,6 +50,7 @@ export function NavBar() {
             {[
               ...LINKS,
               { href: "/courses", label: "Courses", icon: "" },
+              { href: "/yardages", label: "Yardages", icon: "" },
               { href: "/settings", label: "Settings", icon: "" },
             ].map((link) => (
               <Link
@@ -75,6 +76,16 @@ export function NavBar() {
               }`}
             >
               Courses
+            </Link>
+            <Link
+              href="/yardages"
+              className={`text-sm px-3 min-h-11 flex items-center rounded-full ${
+                isActive("/yardages")
+                  ? "bg-kelly-500/20 text-kelly-300"
+                  : "text-cream-400"
+              }`}
+            >
+              Yards
             </Link>
             <Link
               href="/settings"

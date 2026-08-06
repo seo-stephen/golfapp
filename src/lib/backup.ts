@@ -1,5 +1,5 @@
 import { requireDb } from "@/lib/db";
-import type { Course, Round, SwingSession } from "@/types";
+import type { Course, Round, Shot, SwingSession } from "@/types";
 
 // Everything lives in IndexedDB, which iOS Safari will evict after ~7 days of
 // no interaction unless the app is installed to the Home Screen. A season of
@@ -15,14 +15,17 @@ export interface BackupFile {
   /** Swing video blobs are deliberately omitted — they are large and replaceable. */
   rounds: Round[];
   swingSessions: Omit<SwingSession, "videoBlob">[];
+  /** Optional: absent in backups written before the yardage book existed. */
+  shots?: Shot[];
 }
 
 export async function buildBackup(exportedAt: string): Promise<BackupFile> {
   const db = requireDb();
-  const [courses, rounds, sessions] = await Promise.all([
+  const [courses, rounds, sessions, shots] = await Promise.all([
     db.courses.toArray(),
     db.rounds.toArray(),
     db.swingSessions.toArray(),
+    db.shots.toArray(),
   ]);
 
   return {
@@ -42,6 +45,7 @@ export async function buildBackup(exportedAt: string): Promise<BackupFile> {
       notes: s.notes,
       createdAt: s.createdAt,
     })),
+    shots,
   };
 }
 
@@ -60,6 +64,7 @@ export interface RestoreResult {
   courses: number;
   rounds: number;
   swingSessions: number;
+  shots: number;
 }
 
 /**
@@ -79,16 +84,26 @@ export async function restoreBackup(backup: BackupFile): Promise<RestoreResult> 
     // Videos aren't in the backup; keep the metrics with an empty placeholder.
     videoBlob: new Blob([], { type: "video/mp4" }),
   })) as SwingSession[];
+  const shots = backup.shots ?? [];
 
-  await db.transaction("rw", db.courses, db.rounds, db.swingSessions, async () => {
-    if (backup.courses.length) await db.courses.bulkPut(backup.courses);
-    if (backup.rounds.length) await db.rounds.bulkPut(backup.rounds);
-    if (sessions.length) await db.swingSessions.bulkPut(sessions);
-  });
+  await db.transaction(
+    "rw",
+    db.courses,
+    db.rounds,
+    db.swingSessions,
+    db.shots,
+    async () => {
+      if (backup.courses.length) await db.courses.bulkPut(backup.courses);
+      if (backup.rounds.length) await db.rounds.bulkPut(backup.rounds);
+      if (sessions.length) await db.swingSessions.bulkPut(sessions);
+      if (shots.length) await db.shots.bulkPut(shots);
+    }
+  );
 
   return {
     courses: backup.courses.length,
     rounds: backup.rounds.length,
     swingSessions: sessions.length,
+    shots: shots.length,
   };
 }

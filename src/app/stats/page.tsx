@@ -3,7 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { requireDb } from "@/lib/db";
 import { MIN_ROUNDS_FOR_INDEX, computeHandicapIndex } from "@/lib/handicap";
-import { isScoreComplete, totalStrokesFor } from "@/lib/repo";
+import { isBlowUpHole, isScoreComplete, totalStrokesFor } from "@/lib/repo";
 import { Card, StatTile } from "@/components/ui";
 import { TrendChart } from "@/components/TrendChart";
 
@@ -70,6 +70,29 @@ export default function StatsPage() {
     ? Math.round((girEligible.filter((h) => h.gir).length / girEligible.length) * 100)
     : null;
 
+  // The single biggest lever for breaking 90 as a beginner: cutting down
+  // double-bogey-or-worse holes matters more than incremental GIR gains.
+  const blowUpEligible = allHoles.filter((h) => h.strokes != null);
+  const blowUpPct = blowUpEligible.length
+    ? Math.round(
+        (blowUpEligible.filter(isBlowUpHole).length / blowUpEligible.length) * 100
+      )
+    : null;
+
+  const fullyPenaltyLogged = completed.filter(
+    (r) => r.holeScores.length > 0 && r.holeScores.every((h) => h.penalties != null)
+  );
+  const avgPenalties = fullyPenaltyLogged.length
+    ? Math.round(
+        (fullyPenaltyLogged.reduce(
+          (s, r) => s + r.holeScores.reduce((ps, h) => ps + (h.penalties ?? 0), 0),
+          0
+        ) /
+          fullyPenaltyLogged.length) *
+          10
+      ) / 10
+    : null;
+
   // Per-round putting average is only comparable across rounds where putts were
   // recorded on every hole; a round with two holes logged is not a "round".
   const fullyPutted = completed.filter(
@@ -106,9 +129,15 @@ export default function StatsPage() {
           }
         />
         <StatTile label="Scoring avg" value={avgScore ?? "—"} />
+        <StatTile
+          label="Blow-up holes"
+          value={blowUpPct != null ? `${blowUpPct}%` : "—"}
+          sub="double bogey or worse"
+        />
         <StatTile label="Fairways hit" value={fairwayPct != null ? `${fairwayPct}%` : "—"} />
         <StatTile label="GIR" value={girPct != null ? `${girPct}%` : "—"} />
         <StatTile label="Putts / round" value={avgPutts ?? "—"} />
+        <StatTile label="Penalties / round" value={avgPenalties ?? "—"} />
       </div>
 
       <Card>

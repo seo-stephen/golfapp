@@ -8,6 +8,7 @@ import {
   bumpRoundHole,
   deleteRound,
   finishRound,
+  isBlowUpHole,
   isScoreComplete,
   updateRoundHole,
 } from "@/lib/repo";
@@ -53,6 +54,9 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
   const girHit = round.holeScores.filter((h) => h.gir === true).length;
   const girRecorded = round.holeScores.filter((h) => h.gir != null).length;
 
+  const totalPenalties = round.holeScores.reduce((s, h) => s + (h.penalties ?? 0), 0);
+  const blowUps = enteredHoles.filter(isBlowUpHole).length;
+
   const currentHole = round.holeScores[holeIdx];
 
   async function handleDelete() {
@@ -71,7 +75,7 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
         <Stat
           label="Score"
           value={
@@ -86,6 +90,11 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
           value={fairwaysRecorded ? `${fairwaysHit}/${fairwaysRecorded}` : "—"}
         />
         <Stat label="GIR" value={girRecorded ? `${girHit}/${girRecorded}` : "—"} />
+        <Stat label="Penalties" value={totalPenalties || "—"} />
+        <Stat
+          label="Blow-ups"
+          value={enteredHoles.length ? `${blowUps}/${enteredHoles.length}` : "—"}
+        />
       </div>
 
       {/* Phone: one hole at a time, big targets. Desktop: full table. */}
@@ -127,6 +136,12 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
             value={currentHole.putts}
             onSet={(v) => updateRoundHole(roundId, currentHole.number, { putts: v })}
             onBump={(d) => bumpRoundHole(roundId, currentHole.number, "putts", d)}
+          />
+          <StepperRow
+            label="Penalties"
+            value={currentHole.penalties}
+            onSet={(v) => updateRoundHole(roundId, currentHole.number, { penalties: v })}
+            onBump={(d) => bumpRoundHole(roundId, currentHole.number, "penalties", d)}
           />
 
           {currentHole.par !== 3 && (
@@ -339,7 +354,7 @@ function HoleTable({
   const par = holes.reduce((s, h) => s + h.par, 0);
 
   return (
-    <table className="w-full text-sm min-w-[560px]">
+    <table className="w-full text-sm min-w-[630px]">
       <caption className="text-left text-cream-400 mb-2 caption-top">
         {title} <span className="text-cream-600">· par {par}</span>
       </caption>
@@ -349,6 +364,7 @@ function HoleTable({
           <th className="text-left font-medium py-1 pr-2">Par</th>
           <th className="text-left font-medium py-1 pr-2">Strokes</th>
           <th className="text-left font-medium py-1 pr-2">Putts</th>
+          <th className="text-left font-medium py-1 pr-2">Penalties</th>
           <th className="text-left font-medium py-1 pr-2">Fairway</th>
           <th className="text-left font-medium py-1 pr-2">GIR</th>
         </tr>
@@ -368,6 +384,12 @@ function HoleTable({
               <NumberCell
                 value={h.putts}
                 onChange={(v) => updateRoundHole(roundId, h.number, { putts: v })}
+              />
+            </td>
+            <td className="py-1.5 pr-2">
+              <NumberCell
+                value={h.penalties}
+                onChange={(v) => updateRoundHole(roundId, h.number, { penalties: v })}
               />
             </td>
             <td className="py-1.5 pr-2">
@@ -394,6 +416,9 @@ function HoleTable({
           <td className="py-1.5 pr-2">{strokes || "—"}</td>
           <td className="py-1.5 pr-2">
             {holes.reduce((s, h) => s + (h.putts ?? 0), 0) || "—"}
+          </td>
+          <td className="py-1.5 pr-2">
+            {holes.reduce((s, h) => s + (h.penalties ?? 0), 0) || "—"}
           </td>
           <td colSpan={2} />
         </tr>

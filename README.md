@@ -68,10 +68,13 @@ the route falls back to sample data rather than erroring.
 - **Courses** (`/courses`) — search for courses or add one manually with per-hole pars,
   tee ratings, and slope.
 - **Rounds** (`/round/new`, `/round/[id]`, `/rounds`) — start a round, enter strokes,
-  putts, fairways hit, and greens in regulation per hole. Totals and score relative to
-  par update live.
-- **Stats** (`/stats`) — scoring average, fairway %, GIR %, putts per round, and a
-  handicap index trend chart.
+  putts, penalty strokes, fairways hit, and greens in regulation per hole. Totals, score
+  relative to par, and blow-up holes (double bogey or worse) update live.
+- **Stats** (`/stats`) — scoring average, blow-up hole %, fairway %, GIR %, putts per
+  round, penalty strokes per round, and a handicap index trend chart.
+- **Yardages** (`/yardages`) — log club, distance, and shot result from the range or an
+  approach shot; builds a personal yardage book (avg/min/max distance per club) over
+  time instead of guessing carry distances.
 - **Swing analysis** (`/swing`) — record a swing with your camera; MoveNet pose
   detection runs locally to estimate swing tempo, spine tilt at address, and head sway,
   with a frame-by-frame skeleton scrubber.

@@ -34,6 +34,8 @@ export interface HoleScore {
   putts: number | null;
   fairwayHit: boolean | null; // null = n/a (par 3) or not recorded
   gir: boolean | null;
+  /** OB, water, lost ball, etc. — strokes already included in `strokes`. */
+  penalties: number | null;
 }
 
 export interface Round {
@@ -84,5 +86,17 @@ export interface SwingSession {
   frames: PoseFrame[];
   metrics: SwingMetrics;
   notes?: string;
+  createdAt: number;
+}
+
+export type ShotResult = "green" | "short" | "long" | "left" | "right";
+
+/** A single logged range/approach shot, for building a personal yardage book. */
+export interface Shot {
+  id: string;
+  date: number;
+  club: string;
+  distanceYds: number;
+  result: ShotResult | null;
   createdAt: number;
 }

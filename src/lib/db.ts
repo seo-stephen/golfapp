@@ -1,10 +1,11 @@
 import Dexie, { type EntityTable } from "dexie";
-import type { Course, Round, SwingSession } from "@/types";
+import type { Course, Round, Shot, SwingSession } from "@/types";
 
 class BogeyBoysDB extends Dexie {
   courses!: EntityTable<Course, "id">;
   rounds!: EntityTable<Round, "id">;
   swingSessions!: EntityTable<SwingSession, "id">;
+  shots!: EntityTable<Shot, "id">;
 
   constructor() {
     super("bogeyboys");
@@ -22,6 +23,12 @@ class BogeyBoysDB extends Dexie {
     // fine at this scale. Dropping an index doesn't touch the stored records.
     this.version(2).stores({
       rounds: "id, courseId, date, createdAt",
+    });
+
+    // v3 adds the yardage-book log. `penalties` on HoleScore needs no bump —
+    // it lives inside the `rounds` records themselves, not as an index.
+    this.version(3).stores({
+      shots: "id, date, club, createdAt",
     });
   }
 }

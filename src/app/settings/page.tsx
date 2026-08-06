@@ -76,12 +76,13 @@ export default function SettingsPage() {
   const counts = useLiveQuery(async () => {
     if (typeof window === "undefined") return null;
     const db = requireDb();
-    const [courses, rounds, swings] = await Promise.all([
+    const [courses, rounds, swings, shots] = await Promise.all([
       db.courses.count(),
       db.rounds.count(),
       db.swingSessions.count(),
+      db.shots.count(),
     ]);
-    return { courses, rounds, swings };
+    return { courses, rounds, swings, shots };
   }, [], null);
 
   const fileRef = useRef<HTMLInputElement>(null);
@@ -128,7 +129,7 @@ export default function SettingsPage() {
       }
       const result = await restoreBackup(parsed);
       setStatus(
-        `Restored ${plural(result.rounds, "round")}, ${plural(result.courses, "course")}, ${plural(result.swingSessions, "swing session")}. Entries with the same id were updated, not duplicated.`
+        `Restored ${plural(result.rounds, "round")}, ${plural(result.courses, "course")}, ${plural(result.swingSessions, "swing session")}, ${plural(result.shots, "logged shot")}. Entries with the same id were updated, not duplicated.`
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -155,6 +156,7 @@ export default function SettingsPage() {
                 plural(counts.rounds, "round"),
                 plural(counts.courses, "course"),
                 plural(counts.swings, "swing session"),
+                plural(counts.shots, "logged shot"),
               ].join(" · ")
             : "Loading…"}
         </div>

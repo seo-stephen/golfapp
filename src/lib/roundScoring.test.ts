@@ -13,6 +13,7 @@ function holes(strokes: (number | null)[]): HoleScore[] {
     putts: null,
     fairwayHit: null,
     gir: null,
+    penalties: null,
   }));
 }
 

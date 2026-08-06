@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
 import { requireDb } from "@/lib/db";
 import { computeDifferential } from "@/lib/handicap";
-import type { Course, HoleScore, Round, SwingSession, Tee } from "@/types";
+import type { Course, HoleScore, Round, Shot, ShotResult, SwingSession, Tee } from "@/types";
 
 export function emptyHoleScores(holes: Course["holes"]): HoleScore[] {
   return holes
@@ -14,7 +14,13 @@ export function emptyHoleScores(holes: Course["holes"]): HoleScore[] {
       putts: null,
       fairwayHit: h.par === 3 ? null : null,
       gir: null,
+      penalties: null,
     }));
+}
+
+/** Double bogey or worse — for a beginner, avoiding these matters more than GIR%. */
+export function isBlowUpHole(h: HoleScore): boolean {
+  return h.strokes != null && h.strokes - h.par >= 2;
 }
 
 export async function saveCourse(
@@ -96,7 +102,7 @@ export async function updateRoundHole(
 export async function bumpRoundHole(
   roundId: string,
   holeNumber: number,
-  field: "strokes" | "putts",
+  field: "strokes" | "putts" | "penalties",
   delta: number
 ): Promise<void> {
   const db = requireDb();
@@ -183,4 +189,25 @@ export async function getSwingSession(
 export async function deleteSwingSession(id: string): Promise<void> {
   const db = requireDb();
   await db.swingSessions.delete(id);
+}
+
+export async function logShot(input: {
+  club: string;
+  distanceYds: number;
+  result: ShotResult | null;
+}): Promise<Shot> {
+  const db = requireDb();
+  const shot: Shot = { ...input, id: uuid(), date: Date.now(), createdAt: Date.now() };
+  await db.shots.put(shot);
+  return shot;
+}
+
+export async function listShots(): Promise<Shot[]> {
+  const db = requireDb();
+  return db.shots.orderBy("date").reverse().toArray();
+}
+
+export async function deleteShot(id: string): Promise<void> {
+  const db = requireDb();
+  await db.shots.delete(id);
 }
