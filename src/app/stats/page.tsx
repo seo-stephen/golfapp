@@ -57,56 +57,14 @@ export default function StatsPage() {
       ) / 10
     : null;
 
-  const allHoles = completed.flatMap((r) => r.holeScores);
-  const fairwayEligible = allHoles.filter((h) => h.par !== 3 && h.fairwayHit != null);
-  const fairwayPct = fairwayEligible.length
-    ? Math.round(
-        (fairwayEligible.filter((h) => h.fairwayHit).length / fairwayEligible.length) * 100
-      )
-    : null;
-
-  const girEligible = allHoles.filter((h) => h.gir != null);
-  const girPct = girEligible.length
-    ? Math.round((girEligible.filter((h) => h.gir).length / girEligible.length) * 100)
-    : null;
-
   // The single biggest lever for breaking 90 as a beginner: cutting down
   // double-bogey-or-worse holes matters more than incremental GIR gains.
+  const allHoles = completed.flatMap((r) => r.holeScores);
   const blowUpEligible = allHoles.filter((h) => h.strokes != null);
   const blowUpPct = blowUpEligible.length
     ? Math.round(
         (blowUpEligible.filter(isBlowUpHole).length / blowUpEligible.length) * 100
       )
-    : null;
-
-  const fullyPenaltyLogged = completed.filter(
-    (r) => r.holeScores.length > 0 && r.holeScores.every((h) => h.penalties != null)
-  );
-  const avgPenalties = fullyPenaltyLogged.length
-    ? Math.round(
-        (fullyPenaltyLogged.reduce(
-          (s, r) => s + r.holeScores.reduce((ps, h) => ps + (h.penalties ?? 0), 0),
-          0
-        ) /
-          fullyPenaltyLogged.length) *
-          10
-      ) / 10
-    : null;
-
-  // Per-round putting average is only comparable across rounds where putts were
-  // recorded on every hole; a round with two holes logged is not a "round".
-  const fullyPutted = completed.filter(
-    (r) => r.holeScores.length > 0 && r.holeScores.every((h) => h.putts != null)
-  );
-  const avgPutts = fullyPutted.length
-    ? Math.round(
-        (fullyPutted.reduce(
-          (s, r) => s + r.holeScores.reduce((ps, h) => ps + (h.putts ?? 0), 0),
-          0
-        ) /
-          fullyPutted.length) *
-          10
-      ) / 10
     : null;
 
   return (
@@ -118,7 +76,7 @@ export default function StatsPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
         <StatTile
           label="Handicap index"
           value={currentHandicap ?? "—"}
@@ -134,10 +92,6 @@ export default function StatsPage() {
           value={blowUpPct != null ? `${blowUpPct}%` : "—"}
           sub="double bogey or worse"
         />
-        <StatTile label="Fairways hit" value={fairwayPct != null ? `${fairwayPct}%` : "—"} />
-        <StatTile label="GIR" value={girPct != null ? `${girPct}%` : "—"} />
-        <StatTile label="Putts / round" value={avgPutts ?? "—"} />
-        <StatTile label="Penalties / round" value={avgPenalties ?? "—"} />
       </div>
 
       <Card>

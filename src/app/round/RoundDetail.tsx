@@ -45,16 +45,6 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
   const enteredHoles = round.holeScores.filter((h) => h.strokes != null);
   const totalStrokes = enteredHoles.reduce((s, h) => s + (h.strokes ?? 0), 0);
   const totalParEntered = enteredHoles.reduce((s, h) => s + h.par, 0);
-  const totalPutts = round.holeScores.reduce((s, h) => s + (h.putts ?? 0), 0);
-
-  const fairwayEligible = round.holeScores.filter((h) => h.par !== 3);
-  const fairwaysHit = fairwayEligible.filter((h) => h.fairwayHit === true).length;
-  const fairwaysRecorded = fairwayEligible.filter((h) => h.fairwayHit != null).length;
-
-  const girHit = round.holeScores.filter((h) => h.gir === true).length;
-  const girRecorded = round.holeScores.filter((h) => h.gir != null).length;
-
-  const totalPenalties = round.holeScores.reduce((s, h) => s + (h.penalties ?? 0), 0);
   const blowUps = enteredHoles.filter(isBlowUpHole).length;
 
   const currentHole = round.holeScores[holeIdx];
@@ -75,7 +65,7 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+      <div className="grid grid-cols-2 gap-2.5">
         <Stat
           label="Score"
           value={
@@ -84,13 +74,6 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
               : "—"
           }
         />
-        <Stat label="Putts" value={totalPutts || "—"} />
-        <Stat
-          label="Fairways"
-          value={fairwaysRecorded ? `${fairwaysHit}/${fairwaysRecorded}` : "—"}
-        />
-        <Stat label="GIR" value={girRecorded ? `${girHit}/${girRecorded}` : "—"} />
-        <Stat label="Penalties" value={totalPenalties || "—"} />
         <Stat
           label="Blow-ups"
           value={enteredHoles.length ? `${blowUps}/${enteredHoles.length}` : "—"}
@@ -130,33 +113,6 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
             value={currentHole.strokes}
             onSet={(v) => updateRoundHole(roundId, currentHole.number, { strokes: v })}
             onBump={(d) => bumpRoundHole(roundId, currentHole.number, "strokes", d)}
-          />
-          <Stepper
-            label="Putts"
-            value={currentHole.putts}
-            onSet={(v) => updateRoundHole(roundId, currentHole.number, { putts: v })}
-            onBump={(d) => bumpRoundHole(roundId, currentHole.number, "putts", d)}
-          />
-          <Stepper
-            label="Penalties"
-            value={currentHole.penalties}
-            onSet={(v) => updateRoundHole(roundId, currentHole.number, { penalties: v })}
-            onBump={(d) => bumpRoundHole(roundId, currentHole.number, "penalties", d)}
-          />
-
-          {currentHole.par !== 3 && (
-            <ToggleRow
-              label="Fairway hit"
-              value={currentHole.fairwayHit}
-              onChange={(v) =>
-                updateRoundHole(roundId, currentHole.number, { fairwayHit: v })
-              }
-            />
-          )}
-          <ToggleRow
-            label="Green in regulation"
-            value={currentHole.gir}
-            onChange={(v) => updateRoundHole(roundId, currentHole.number, { gir: v })}
           />
         </Card>
 
@@ -249,49 +205,6 @@ function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-function ToggleRow({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: boolean | null;
-  onChange: (v: boolean | null) => void;
-}) {
-  const options: { v: boolean | null; text: string }[] = [
-    { v: true, text: "Yes" },
-    { v: false, text: "No" },
-    { v: null, text: "—" },
-  ];
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <span className="text-sm text-cream-300">{label}</span>
-      <div className="flex gap-1.5">
-        {options.map((o) => {
-          const active = value === o.v;
-          return (
-            <button
-              key={String(o.v)}
-              onClick={() => onChange(o.v)}
-              className={`min-w-14 min-h-11 px-3 rounded-lg text-sm font-medium ${
-                active
-                  ? o.v === true
-                    ? "bg-kelly-600 text-white"
-                    : o.v === false
-                      ? "bg-red-900/70 text-red-100"
-                      : "bg-pine-700 text-cream-200"
-                  : "bg-pine-800 text-cream-400"
-              }`}
-            >
-              {o.text}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 function HoleTable({
   title,
   holes,
@@ -305,7 +218,7 @@ function HoleTable({
   const par = holes.reduce((s, h) => s + h.par, 0);
 
   return (
-    <table className="w-full text-sm min-w-[630px]">
+    <table className="w-full text-sm min-w-[280px]">
       <caption className="text-left text-cream-400 mb-2 caption-top">
         {title} <span className="text-cream-600">· par {par}</span>
       </caption>
@@ -314,10 +227,6 @@ function HoleTable({
           <th className="text-left font-medium py-1 pr-2">Hole</th>
           <th className="text-left font-medium py-1 pr-2">Par</th>
           <th className="text-left font-medium py-1 pr-2">Strokes</th>
-          <th className="text-left font-medium py-1 pr-2">Putts</th>
-          <th className="text-left font-medium py-1 pr-2">Penalties</th>
-          <th className="text-left font-medium py-1 pr-2">Fairway</th>
-          <th className="text-left font-medium py-1 pr-2">GIR</th>
         </tr>
       </thead>
       <tbody>
@@ -331,47 +240,12 @@ function HoleTable({
                 onChange={(v) => updateRoundHole(roundId, h.number, { strokes: v })}
               />
             </td>
-            <td className="py-1.5 pr-2">
-              <NumberCell
-                value={h.putts}
-                onChange={(v) => updateRoundHole(roundId, h.number, { putts: v })}
-              />
-            </td>
-            <td className="py-1.5 pr-2">
-              <NumberCell
-                value={h.penalties}
-                onChange={(v) => updateRoundHole(roundId, h.number, { penalties: v })}
-              />
-            </td>
-            <td className="py-1.5 pr-2">
-              {h.par === 3 ? (
-                <span className="text-cream-600">n/a</span>
-              ) : (
-                <TriToggle
-                  value={h.fairwayHit}
-                  onChange={(v) => updateRoundHole(roundId, h.number, { fairwayHit: v })}
-                />
-              )}
-            </td>
-            <td className="py-1.5 pr-2">
-              <TriToggle
-                value={h.gir}
-                onChange={(v) => updateRoundHole(roundId, h.number, { gir: v })}
-              />
-            </td>
           </tr>
         ))}
         <tr className="border-t border-pine-700 font-medium">
           <td className="py-1.5 pr-2">Tot</td>
           <td className="py-1.5 pr-2 text-cream-400">{par}</td>
           <td className="py-1.5 pr-2">{strokes || "—"}</td>
-          <td className="py-1.5 pr-2">
-            {holes.reduce((s, h) => s + (h.putts ?? 0), 0) || "—"}
-          </td>
-          <td className="py-1.5 pr-2">
-            {holes.reduce((s, h) => s + (h.penalties ?? 0), 0) || "—"}
-          </td>
-          <td colSpan={2} />
         </tr>
       </tbody>
     </table>
@@ -396,29 +270,5 @@ function NumberCell({
       }
       className="w-16 bg-pine-900 border border-pine-700 rounded px-2 py-1.5 text-base focus:outline-none focus:ring-2 focus:ring-kelly-500"
     />
-  );
-}
-
-function TriToggle({
-  value,
-  onChange,
-}: {
-  value: boolean | null;
-  onChange: (v: boolean | null) => void;
-}) {
-  function cycle() {
-    onChange(value === null ? true : value === true ? false : null);
-  }
-  const label = value === null ? "—" : value ? "Y" : "N";
-  const color =
-    value === null
-      ? "bg-pine-800 text-cream-500"
-      : value
-        ? "bg-kelly-600 text-white"
-        : "bg-red-900/60 text-red-200";
-  return (
-    <button type="button" onClick={cycle} className={`w-10 h-9 rounded text-xs font-medium ${color}`}>
-      {label}
-    </button>
   );
 }

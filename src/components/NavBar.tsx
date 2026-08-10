@@ -94,29 +94,41 @@ export function NavBar() {
           </div>
         </div>
       </header>
-
-      {/* iOS-style bottom tab bar on phones. */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-20 border-t border-pine-800 bg-pine-950/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
-        <div className="flex pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
-          {LINKS.map((link) => {
-            const active = isActive(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex-1 flex flex-col items-center justify-center gap-0.5 min-h-14 py-2 text-[11px] active:opacity-60 ${
-                  active ? "text-kelly-400" : "text-cream-500"
-                }`}
-              >
-                <span aria-hidden className="text-lg leading-none">
-                  {link.icon}
-                </span>
-                {link.label}
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
     </>
+  );
+}
+
+/**
+ * Rendered as the LAST child of body, after <main> — not fixed. A fixed
+ * bottom bar is notoriously flaky on iOS Safari: it's positioned against the
+ * layout viewport, which doesn't track the dynamic toolbar, so the bar can
+ * visibly jump when the toolbar/URL-bar changes height. Sticky, placed at the
+ * end of a min-h-dvh flex column, holds its place using normal flow instead.
+ */
+export function BottomTabBar() {
+  const isActive = useIsActive();
+
+  return (
+    <nav className="sm:hidden sticky bottom-0 z-20 border-t border-pine-800 bg-pine-950/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
+      <div className="flex pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
+        {LINKS.map((link) => {
+          const active = isActive(link.href);
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`flex-1 flex flex-col items-center justify-center gap-0.5 min-h-14 py-2 text-[11px] active:opacity-60 ${
+                active ? "text-kelly-400" : "text-cream-500"
+              }`}
+            >
+              <span aria-hidden className="text-lg leading-none">
+                {link.icon}
+              </span>
+              {link.label}
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
   );
 }

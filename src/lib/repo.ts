@@ -51,6 +51,14 @@ export async function getCourse(id: string): Promise<Course | undefined> {
   return db.courses.get(id);
 }
 
+export async function updateCourse(
+  id: string,
+  patch: Partial<Omit<Course, "id" | "createdAt">>
+): Promise<void> {
+  const db = requireDb();
+  await db.courses.update(id, patch);
+}
+
 /** Neutral fallback: rating = par, slope = the WHS standard 113. */
 const DEFAULT_TEE: Tee = { name: "Default", rating: 72, slope: 113 };
 
@@ -104,14 +112,14 @@ export async function updateRoundHole(
 }
 
 /**
- * Adjusts a hole's strokes or putts by a delta, reading the current value
- * inside the transaction. Rapid taps must not compute from the value React last
+ * Adjusts a hole's strokes by a delta, reading the current value inside the
+ * transaction. Rapid taps must not compute from the value React last
  * rendered — that value can lag the database and silently drop increments.
  */
 export async function bumpRoundHole(
   roundId: string,
   holeNumber: number,
-  field: "strokes" | "putts" | "penalties",
+  field: "strokes",
   delta: number
 ): Promise<void> {
   const db = requireDb();

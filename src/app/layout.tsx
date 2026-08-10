@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { NavBar } from "@/components/NavBar";
+import { BottomTabBar, NavBar } from "@/components/NavBar";
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
 
@@ -37,15 +37,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-pine-950 text-cream-100">
+      <body className="min-h-dvh flex flex-col bg-pine-950 text-cream-100">
         <ServiceWorkerRegistrar />
         <NavBar />
         <OfflineBanner />
         {/* Horizontal insets matter in landscape: with viewportFit "cover" the
             sensor housing overlaps the leading edge. */}
-        <main className="flex-1 w-full max-w-5xl mx-auto py-5 pl-[calc(1rem+env(safe-area-inset-left))] pr-[calc(1rem+env(safe-area-inset-right))] pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:pb-8">
+        <main className="flex-1 w-full max-w-5xl mx-auto py-5 pl-[calc(1rem+env(safe-area-inset-left))] pr-[calc(1rem+env(safe-area-inset-right))] pb-6 sm:pb-8">
           {children}
         </main>
+        <BottomTabBar />
       </body>
     </html>
   );
