@@ -1,3 +1,9 @@
+/** WGS84 coordinate pair, as reported by the Geolocation API and OSM. */
+export interface LatLon {
+  lat: number;
+  lon: number;
+}
+
 export interface Tee {
   name: string;
   rating: number;
@@ -10,6 +16,11 @@ export interface CourseHole {
   par: number;
   yardage?: number;
   handicapIndex?: number; // stroke index 1-18, 1 = hardest
+  /**
+   * Centre of the green, for on-course GPS distance. Absent until imported
+   * from OpenStreetMap or captured by standing on the green.
+   */
+  green?: LatLon;
 }
 
 export interface Course {
@@ -18,6 +29,8 @@ export interface Course {
   city?: string;
   state?: string;
   country?: string;
+  /** Clubhouse/property location, used to anchor the OSM hole-data lookup. */
+  location?: LatLon;
   source: "api" | "manual";
   externalId?: string;
   tees: Tee[];

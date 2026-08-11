@@ -81,6 +81,10 @@ the route falls back to sample data rather than erroring.
   (rain chance, wind, temperature), with the next day that clears the bar called out.
   Uses Open-Meteo, which needs no API key; the chosen location is saved to
   `localStorage`, not IndexedDB.
+- **GPS distance** (in a round, on phones) — how far you are from the centre of the
+  green, plus a club suggestion drawn from your own logged yardages. Green positions
+  come from OpenStreetMap in one tap per course, or from standing on the green and
+  saving the spot. See [GPS distance](#gps-distance) below.
 - **Swing analysis** (`/swing`) — record a swing with your camera; MoveNet pose
   detection runs locally to estimate swing tempo, spine tilt at address, and head sway,
   with a frame-by-frame skeleton scrubber.
@@ -119,6 +123,61 @@ for the next 20 rounds.
 Not implemented: the net-double-bogey per-hole cap, Playing Conditions Calculation,
 soft/hard caps, and 9-hole score combining — so this won't exactly match an official
 index.
+
+### GPS distance
+
+While playing a hole on a phone, the round screen can show yardage to the green and
+suggest a club. Three pieces make that work.
+
+**Where green positions come from.** GolfCourseAPI has no per-hole coordinates at any
+tier — hole objects carry only `par`, `yardage`, and `handicap`. OpenStreetMap does,
+but not where you'd expect: `golf=pin` is effectively unmapped (a Toronto-wide query
+returns *zero* nodes). What it does have is `golf=green` areas and `golf=hole` ways,
+where the hole way carries the hole number in `ref` and runs between tee and green. So
+`src/lib/osm.ts` takes each hole way's green-side end and matches it to the nearest
+mapped green centre, which recovers both the numbering and a usable green position.
+`/api/osm/holes` proxies the Overpass query server-side, because Overpass is a donated
+public service that rate-limits and expects an identifying User-Agent.
+
+Two details in that matcher are load-bearing, both learned from real data:
+
+- **Both ends of the hole way are tested**, not just the last point. The convention says
+  a hole runs tee-to-green, but it's crowd-sourced; since only one end can sit on a
+  green, testing both repairs a reversed way for free.
+- **Each green belongs to exactly one hole, and the match threshold is 20 m.** On a real
+  Toronto course, hole 17's green isn't mapped, so its way's end adopted hole 16's green
+  28 m away and reported a yardage about 30 yards wrong. Correct matches all landed
+  within 0–7 m, so the threshold tightened to 20 m *and* greens are claimed
+  exclusively. That course now imports 17 of 18 holes and leaves 17 to be set by hand —
+  which is the right outcome, because a confidently wrong distance is worse than none.
+
+Expect partial coverage generally: across the wider GTA, OSM has 169 golf courses but
+only ~1750 `golf=hole` ways, so roughly half of courses have usable data. The manual
+path isn't a fallback bolted on for completeness — it's the path many courses will take.
+
+**Setting greens by hand.** On a hole with no green saved, the distance card offers "Set
+green at my position" — stand on the green, tap once. It's stored on the course record,
+so it's a one-time step per hole and works for manually-added courses that aren't in OSM
+at all. Greens are read from the live `Course`, not the `Round`, so an import or a
+capture mid-round takes effect immediately even though a round snapshots its pars.
+
+**What the number actually means.** It's the distance to the *centre of the green*, not
+the pin — the pin moves daily and can sit 10–15 yards off centre. Phone GPS is accurate
+to roughly 3–10 m under open sky, so readings land within about ±5–10 yards. That's
+useful for choosing a club and no substitute for a rangefinder, so the card shows the
+current accuracy radius rather than implying precision. Club suggestions come from
+`src/lib/clubAdvice.ts`, which picks the club whose *average* carry is nearest the
+target — deliberately not "the shortest club that covers it", since logged averages
+already include mishits and that rule systematically over-clubs. It shows the sample
+size and says so plainly when a club has only one or two shots behind it.
+
+Tracking is **off until you start it**, because `watchPosition` with high accuracy keeps
+the GPS radio running and a four-hour round is a long time to hold a phone awake. Like
+the swing camera, it needs a secure context — `npm run dev:phone` covers that.
+
+Once greens are stored, distance works with no signal; only the initial OSM import needs
+the network. OSM data is ODbL, so anywhere imported data surfaces carries
+`© OpenStreetMap contributors`.
 
 ### How swing analysis works
 
@@ -183,8 +242,10 @@ Settings shows whether the model is cached and offers a "Download for offline us
 button — verified by downloading it, killing the server, and cold-loading `/swing`, which
 comes up ready to record.
 
-Course search and the weather forecast are the only features that need the network, and
-both say so instead of showing "no results".
+Course search, the weather forecast, and the one-time OSM green import are the only
+features that need the network, and each says so instead of failing silently. GPS
+distance keeps working offline once greens are stored, since the coordinates live in
+IndexedDB with the course and the maths is local.
 
 **Deployment caveat, unverified:** `public/precache.json` is written during `npm run
 build`, so it should be captured by any host that snapshots the build output (Vercel
@@ -208,6 +269,11 @@ and an offline toggle will not exercise it.
 - Swing recording has **not been verified end to end on a real device** — the pose math,
   metrics, and UI are unit-tested and the model loads, but the camera capture path needs
   a real swing on a real iPhone.
+- GPS distance has been verified as far as a desk allows: the geo maths, the OSM matcher,
+  and the club logic are unit-tested, and `/api/osm/holes` was checked against live
+  Overpass data for a real course (17 of 18 holes, every match within 7 m). What hasn't
+  happened is **standing on a course with a phone** — the accuracy of the resulting
+  yardage in practice, and whether the reading is stable enough to club off, are unproven.
 - The GolfCourseAPI response mapping has never run against a live key.
 - The service worker is hand-written rather than Serwist. `next-pwa` is abandoned and
   `@serwist/next` is webpack-only, so it wouldn't work with Turbopack anyway; the

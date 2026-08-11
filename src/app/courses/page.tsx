@@ -6,6 +6,7 @@ import { requireDb } from "@/lib/db";
 import { saveCourse, updateCourse } from "@/lib/repo";
 import { Button, Card, Input } from "@/components/ui";
 import { burstOriginFromEvent, useGolfBallBurst } from "@/components/GolfBallBurst";
+import { ImportGreensButton } from "@/components/ImportGreensButton";
 import type { Course } from "@/types";
 
 interface SearchResponse {
@@ -89,6 +90,7 @@ export default function CoursesPage() {
         city: course.city,
         state: course.state,
         country: course.country,
+        location: course.location,
         source: course.source,
         externalId: course.externalId,
         tees: course.tees,
@@ -226,6 +228,9 @@ export default function CoursesPage() {
                 >
                   {formTarget !== "new" && formTarget?.id === c.id ? "Cancel" : "Edit"}
                 </Button>
+              </div>
+              <div className="mt-2">
+                <ImportGreensButton course={c} />
               </div>
               {formTarget !== "new" && formTarget?.id === c.id && (
                 <CourseForm

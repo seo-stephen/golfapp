@@ -4,6 +4,7 @@ import { computeDifferential } from "@/lib/handicap";
 import type {
   Course,
   HoleScore,
+  LatLon,
   PuttingSession,
   Round,
   Shot,
@@ -57,6 +58,53 @@ export async function updateCourse(
 ): Promise<void> {
   const db = requireDb();
   await db.courses.update(id, patch);
+}
+
+/**
+ * Records one hole's green position, for GPS distance. Read-modify-write on the
+ * nested holes array, so it runs in a transaction for the same reason
+ * updateRoundHole does — two quick captures must not clobber each other.
+ */
+export async function setCourseHoleGreen(
+  courseId: string,
+  holeNumber: number,
+  green: LatLon | null
+): Promise<void> {
+  const db = requireDb();
+  await db.transaction("rw", db.courses, async () => {
+    const course = await db.courses.get(courseId);
+    if (!course) return;
+    const holes = course.holes.map((h) =>
+      h.number === holeNumber ? { ...h, green: green ?? undefined } : h
+    );
+    await db.courses.update(courseId, { holes });
+  });
+}
+
+/**
+ * Applies imported green positions in bulk, leaving holes absent from `greens`
+ * untouched — a partial OSM import must not wipe greens captured by hand.
+ * Returns how many holes were actually updated.
+ */
+export async function setCourseHoleGreens(
+  courseId: string,
+  greens: { number: number; green: LatLon }[]
+): Promise<number> {
+  const db = requireDb();
+  let applied = 0;
+  await db.transaction("rw", db.courses, async () => {
+    const course = await db.courses.get(courseId);
+    if (!course) return;
+    const byNumber = new Map(greens.map((g) => [g.number, g.green]));
+    const holes = course.holes.map((h) => {
+      const green = byNumber.get(h.number);
+      if (!green) return h;
+      applied += 1;
+      return { ...h, green };
+    });
+    await db.courses.update(courseId, { holes });
+  });
+  return applied;
 }
 
 /** Neutral fallback: rating = par, slope = the WHS standard 113. */

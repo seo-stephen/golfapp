@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { deleteShot, listShots, logShot } from "@/lib/repo";
+import { clubStats } from "@/lib/clubAdvice";
 import { Button, Card, Input, Select } from "@/components/ui";
-import type { Shot, ShotResult } from "@/types";
+import type { ShotResult } from "@/types";
 
 const COMMON_CLUBS = [
   "Driver",
@@ -65,24 +66,8 @@ export default function YardagesPage() {
     }
   }
 
-  // Longest club first, matching how a printed yardage book reads.
-  const byClub = new Map<string, Shot[]>();
-  for (const s of all) {
-    byClub.set(s.club, [...(byClub.get(s.club) ?? []), s]);
-  }
-  const summary = [...byClub.entries()]
-    .map(([clubName, clubShots]) => {
-      const distances = clubShots.map((s) => s.distanceYds);
-      const avg = Math.round(distances.reduce((a, b) => a + b, 0) / distances.length);
-      return {
-        club: clubName,
-        count: clubShots.length,
-        avg,
-        min: Math.min(...distances),
-        max: Math.max(...distances),
-      };
-    })
-    .sort((a, b) => b.avg - a.avg);
+  // Shared with the on-course club suggestion, so both read the same averages.
+  const summary = clubStats(all);
 
   return (
     <div className="space-y-6">
@@ -168,12 +153,12 @@ export default function YardagesPage() {
                 <tr key={row.club} className="border-t border-pine-800">
                   <td className="py-1.5 pr-2 font-medium">{row.club}</td>
                   <td className="py-1.5 pr-2 text-kelly-400 font-semibold">
-                    {row.avg} yds
+                    {row.avgYds} yds
                   </td>
                   <td className="py-1.5 pr-2 text-cream-400">
-                    {row.min}–{row.max}
+                    {row.minYds}–{row.maxYds}
                   </td>
-                  <td className="py-1.5 pr-2 text-cream-400">{row.count}</td>
+                  <td className="py-1.5 pr-2 text-cream-400">{row.shots}</td>
                 </tr>
               ))}
             </tbody>

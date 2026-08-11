@@ -14,6 +14,7 @@ import {
 } from "@/lib/repo";
 import { Button, Card, Stepper } from "@/components/ui";
 import { burstOriginFromEvent, useGolfBallBurst } from "@/components/GolfBallBurst";
+import { HoleDistance } from "@/components/HoleDistance";
 import type { HoleScore } from "@/types";
 
 function toPar(total: number, par: number) {
@@ -117,6 +118,10 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
             onBump={(d) => bumpRoundHole(roundId, currentHole.number, "strokes", d)}
           />
         </Card>
+
+        {/* Phone-only: a GPS yardage is a standing-on-the-course feature, and
+            this is the one-hole-at-a-time view it belongs to. */}
+        <HoleDistance courseId={round.courseId} holeNumber={currentHole.number} />
 
         <div className="grid grid-cols-9 gap-1.5">
           {round.holeScores.map((h, i) => {

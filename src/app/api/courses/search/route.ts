@@ -23,7 +23,13 @@ interface ApiCourse {
   id?: number | string;
   course_name?: string;
   club_name?: string;
-  location?: { city?: string; state?: string; country?: string };
+  location?: {
+    city?: string;
+    state?: string;
+    country?: string;
+    latitude?: number;
+    longitude?: number;
+  };
   tees?: { male?: ApiTee[]; female?: ApiTee[] };
 }
 
@@ -101,12 +107,23 @@ function mapApiCourses(data: unknown): Course[] {
         }))
       : Array.from({ length: 18 }, (_, idx) => ({ number: idx + 1, par: 4 }));
 
+    // Only kept when both are real numbers — a half-present pair would anchor
+    // the OSM green lookup at the equator.
+    const lat = c.location?.latitude;
+    const lon = c.location?.longitude;
+    const location =
+      typeof lat === "number" && Number.isFinite(lat) &&
+      typeof lon === "number" && Number.isFinite(lon)
+        ? { lat, lon }
+        : undefined;
+
     return {
       id: `api-${c.id ?? i}`,
       name: c.course_name ?? c.club_name ?? "Unknown Course",
       city: c.location?.city,
       state: c.location?.state,
       country: c.location?.country,
+      location,
       // Flag placeholder pars so the UI can tell the user to check them rather
       // than silently presenting 18 par-4s as this course's real scorecard.
       parsAreEstimated: !hasRealHoles,
