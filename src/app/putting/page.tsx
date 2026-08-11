@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { deletePuttingSession, listPuttingSessions, logPuttingSession } from "@/lib/repo";
 import { Button, Card, Stepper, StatTile } from "@/components/ui";
+import { burstOriginFromEvent, useGolfBallBurst } from "@/components/GolfBallBurst";
 import { TrendChart } from "@/components/TrendChart";
 
 const QUICK_DISTANCES = [3, 4, 5, 6, 8, 10];
@@ -13,6 +14,7 @@ function pct(makes: number, attempts: number) {
 }
 
 export default function PuttingPage() {
+  const burst = useGolfBallBurst();
   const sessions = useLiveQuery(async () => {
     if (typeof window === "undefined") return [];
     return listPuttingSessions();
@@ -134,7 +136,14 @@ export default function PuttingPage() {
           {attempts > 0 && <span className="text-kelly-400">({pct(made, attempts)}%)</span>}
         </p>
 
-        <Button onClick={handleSave} disabled={busy || attempts === 0} className="w-full sm:w-auto">
+        <Button
+          onClick={(e) => {
+            burst(burstOriginFromEvent(e));
+            handleSave();
+          }}
+          disabled={busy || attempts === 0}
+          className="w-full sm:w-auto"
+        >
           Save session
         </Button>
 

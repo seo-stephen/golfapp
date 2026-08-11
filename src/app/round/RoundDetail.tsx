@@ -13,6 +13,7 @@ import {
   updateRoundHole,
 } from "@/lib/repo";
 import { Button, Card, Stepper } from "@/components/ui";
+import { burstOriginFromEvent, useGolfBallBurst } from "@/components/GolfBallBurst";
 import type { HoleScore } from "@/types";
 
 function toPar(total: number, par: number) {
@@ -23,6 +24,7 @@ function toPar(total: number, par: number) {
 
 export default function RoundDetail({ roundId }: { roundId: string }) {
   const router = useRouter();
+  const burst = useGolfBallBurst();
 
   // Dexie's get() and useLiveQuery both yield undefined, so a missing round
   // would be indistinguishable from "still loading" and spin forever. Map the
@@ -166,7 +168,15 @@ export default function RoundDetail({ roundId }: { roundId: string }) {
       </div>
 
       <div className="flex gap-2">
-        <Button onClick={() => finishRound(roundId)} className="flex-1 sm:flex-none">
+        <Button
+          onClick={(e) => {
+            // Only the first finish is a celebration — tapping "Recalculate"
+            // afterward (e.g. after fixing a hole) shouldn't repeat it.
+            if (!round.completed) burst(burstOriginFromEvent(e));
+            finishRound(roundId);
+          }}
+          className="flex-1 sm:flex-none"
+        >
           {round.completed ? "Recalculate" : "Finish round"}
         </Button>
         <Button variant="danger" onClick={handleDelete}>

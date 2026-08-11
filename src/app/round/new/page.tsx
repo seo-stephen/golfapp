@@ -6,9 +6,11 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { requireDb } from "@/lib/db";
 import { startRound } from "@/lib/repo";
 import { Button, Card, Select } from "@/components/ui";
+import { burstOriginFromEvent, useGolfBallBurst } from "@/components/GolfBallBurst";
 
 export default function NewRoundPage() {
   const router = useRouter();
+  const burst = useGolfBallBurst();
   const courses = useLiveQuery(async () => {
     if (typeof window === "undefined") return [];
     return requireDb().courses.orderBy("name").toArray();
@@ -99,7 +101,10 @@ export default function NewRoundPage() {
 
             <Button
               disabled={!selectedCourse || starting}
-              onClick={handleStart}
+              onClick={(e) => {
+                burst(burstOriginFromEvent(e));
+                handleStart();
+              }}
               className="w-full sm:w-auto"
             >
               {starting ? "Starting…" : "Start round"}

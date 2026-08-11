@@ -5,6 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { requireDb } from "@/lib/db";
 import { saveCourse, updateCourse } from "@/lib/repo";
 import { Button, Card, Input } from "@/components/ui";
+import { burstOriginFromEvent, useGolfBallBurst } from "@/components/GolfBallBurst";
 import type { Course } from "@/types";
 
 interface SearchResponse {
@@ -18,6 +19,7 @@ async function fetchCourses(q: string): Promise<SearchResponse> {
 }
 
 export default function CoursesPage() {
+  const burst = useGolfBallBurst();
   const savedCourses = useLiveQuery(async () => {
     if (typeof window === "undefined") return [];
     return requireDb().courses.orderBy("name").toArray();
@@ -172,7 +174,10 @@ export default function CoursesPage() {
                 disabled={
                   savedKeys.has(identity(course)) || addingKeys.has(identity(course))
                 }
-                onClick={() => addResultToLibrary(course)}
+                onClick={(e) => {
+                  burst(burstOriginFromEvent(e));
+                  addResultToLibrary(course);
+                }}
               >
                 {savedKeys.has(identity(course)) ? "In your library" : "Add to my courses"}
               </Button>

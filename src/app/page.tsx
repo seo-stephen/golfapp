@@ -6,8 +6,10 @@ import { requireDb } from "@/lib/db";
 import { MIN_ROUNDS_FOR_INDEX, computeHandicapIndex } from "@/lib/handicap";
 import { isScoreComplete, totalStrokesFor } from "@/lib/repo";
 import { Button, Card, StatTile } from "@/components/ui";
+import { burstOriginFromEvent, useGolfBallBurst } from "@/components/GolfBallBurst";
 
 export default function Dashboard() {
+  const burst = useGolfBallBurst();
   const rounds = useLiveQuery(async () => {
     if (typeof window === "undefined") return [];
     return requireDb().rounds.orderBy("date").toArray();
@@ -48,7 +50,12 @@ export default function Dashboard() {
           </p>
         </div>
         <Link href="/round/new" className="w-full sm:w-auto">
-          <Button className="w-full sm:w-auto">Start a round</Button>
+          <Button
+            className="w-full sm:w-auto"
+            onClick={(e) => burst(burstOriginFromEvent(e))}
+          >
+            Start a round
+          </Button>
         </Link>
       </div>
 
