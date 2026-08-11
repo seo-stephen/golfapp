@@ -77,6 +77,10 @@ the route falls back to sample data rather than erroring.
   time instead of guessing carry distances.
 - **Putting** (`/putting`) — tally makes/misses from a chosen distance (a putting mat at
   home, say) and track made % per distance over time on a trend chart.
+- **Weather** (`/weather`) — search a location and see a 7-day outlook scored for golf
+  (rain chance, wind, temperature), with the next day that clears the bar called out.
+  Uses Open-Meteo, which needs no API key; the chosen location is saved to
+  `localStorage`, not IndexedDB.
 - **Swing analysis** (`/swing`) — record a swing with your camera; MoveNet pose
   detection runs locally to estimate swing tempo, spine tilt at address, and head sway,
   with a frame-by-frame skeleton scrubber.
@@ -179,7 +183,8 @@ Settings shows whether the model is cached and offers a "Download for offline us
 button — verified by downloading it, killing the server, and cold-loading `/swing`, which
 comes up ready to record.
 
-Only course search needs the network, and it says so instead of showing "no results".
+Course search and the weather forecast are the only features that need the network, and
+both say so instead of showing "no results".
 
 **Deployment caveat, unverified:** `public/precache.json` is written during `npm run
 build`, so it should be captured by any host that snapshots the build output (Vercel

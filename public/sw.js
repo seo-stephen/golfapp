@@ -26,6 +26,7 @@ const SHELL_ROUTES = [
   "/swing",
   "/swing/session",
   "/courses",
+  "/weather",
   "/settings",
 ];
 

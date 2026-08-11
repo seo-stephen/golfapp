@@ -19,6 +19,7 @@ const SECONDARY = [
   { href: "/courses", label: "Courses", icon: "📍" },
   { href: "/yardages", label: "Yardages", icon: "📏" },
   { href: "/putting", label: "Putting", icon: "🎯" },
+  { href: "/weather", label: "Weather", icon: "⛅" },
   { href: "/settings", label: "Settings", icon: "⚙" },
 ];
 
