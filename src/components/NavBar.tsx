@@ -4,10 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
+// Starting a round lives on the home page dashboard, not its own tab — a
+// separate "Play" destination was redundant with it.
 const LINKS = [
   { href: "/", label: "Home", icon: "⛳" },
   { href: "/rounds", label: "Rounds", icon: "📋" },
-  { href: "/round/new", label: "Play", icon: "＋" },
+  { href: "/putting", label: "Putting", icon: "🎯" },
   { href: "/stats", label: "Stats", icon: "📈" },
   { href: "/swing", label: "Swing", icon: "🏌" },
 ];
@@ -18,7 +20,6 @@ const LINKS = [
 const SECONDARY = [
   { href: "/courses", label: "Courses", icon: "📍" },
   { href: "/yardages", label: "Yardages", icon: "📏" },
-  { href: "/putting", label: "Putting", icon: "🎯" },
   { href: "/weather", label: "Weather", icon: "⛅" },
   { href: "/settings", label: "Settings", icon: "⚙" },
 ];
@@ -29,7 +30,6 @@ function useIsActive() {
     if (href === "/") return pathname === "/";
     // A single round lives at /round?id=… , so highlight the Rounds tab for it.
     if (href === "/rounds") return pathname === "/rounds" || pathname === "/round";
-    if (href === "/round/new") return pathname === "/round/new";
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 }
