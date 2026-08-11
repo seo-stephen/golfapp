@@ -4,7 +4,8 @@
 const GEOCODE_BASE = "https://geocoding-api.open-meteo.com/v1/search";
 const FORECAST_BASE = "https://api.open-meteo.com/v1/forecast";
 
-// Fahrenheit/mph to match the rest of the app (yardages are logged in yards).
+// Metric units (Celsius, km/h) — Open-Meteo's own defaults, passed explicitly
+// for clarity at the call site below.
 const FORECAST_DAYS = 7;
 
 export interface GeoResult {
@@ -18,11 +19,11 @@ export interface GeoResult {
 export interface DailyForecast {
   date: string; // YYYY-MM-DD, in the location's own timezone
   weatherCode: number;
-  tempMaxF: number;
-  tempMinF: number;
+  tempMaxC: number;
+  tempMinC: number;
   /** Open-Meteo omits this for some locations/ranges. */
   precipitationProbabilityMax: number | null;
-  windSpeedMaxMph: number;
+  windSpeedMaxKmh: number;
 }
 
 export type GolfDayLabel = "great" | "good" | "marginal" | "poor";
@@ -96,8 +97,8 @@ export async function fetchForecast(
     longitude: String(longitude),
     daily:
       "weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max",
-    temperature_unit: "fahrenheit",
-    windspeed_unit: "mph",
+    temperature_unit: "celsius",
+    windspeed_unit: "kmh",
     timezone: "auto",
     forecast_days: String(FORECAST_DAYS),
   });
@@ -112,10 +113,10 @@ export async function fetchForecast(
   return daily.time.map((date, i) => ({
     date,
     weatherCode: daily.weathercode?.[i] ?? 0,
-    tempMaxF: daily.temperature_2m_max?.[i] ?? 0,
-    tempMinF: daily.temperature_2m_min?.[i] ?? 0,
+    tempMaxC: daily.temperature_2m_max?.[i] ?? 0,
+    tempMinC: daily.temperature_2m_min?.[i] ?? 0,
     precipitationProbabilityMax: daily.precipitation_probability_max?.[i] ?? null,
-    windSpeedMaxMph: daily.windspeed_10m_max?.[i] ?? 0,
+    windSpeedMaxKmh: daily.windspeed_10m_max?.[i] ?? 0,
   }));
 }
 
@@ -181,14 +182,14 @@ export function scoreGolfDay(day: DailyForecast): GolfDayScore {
     const precip = day.precipitationProbabilityMax ?? 0;
     score -= precip * 0.6;
 
-    if (day.windSpeedMaxMph > 15) {
-      score -= (day.windSpeedMaxMph - 15) * 2;
+    if (day.windSpeedMaxKmh > 24) {
+      score -= (day.windSpeedMaxKmh - 24) * 1.25;
     }
 
-    if (day.tempMaxF < 50) {
-      score -= (50 - day.tempMaxF) * 2;
-    } else if (day.tempMaxF > 90) {
-      score -= (day.tempMaxF - 90) * 2;
+    if (day.tempMaxC < 10) {
+      score -= (10 - day.tempMaxC) * 3.5;
+    } else if (day.tempMaxC > 30) {
+      score -= (day.tempMaxC - 30) * 3.5;
     }
 
     score = Math.max(0, Math.min(100, Math.round(score)));

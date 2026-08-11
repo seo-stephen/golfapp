@@ -11,10 +11,10 @@ function day(overrides: Partial<DailyForecast> = {}): DailyForecast {
   return {
     date: "2026-08-12",
     weatherCode: 0,
-    tempMaxF: 75,
-    tempMinF: 60,
+    tempMaxC: 22,
+    tempMinC: 16,
     precipitationProbabilityMax: 0,
-    windSpeedMaxMph: 5,
+    windSpeedMaxKmh: 8,
     ...overrides,
   };
 }
@@ -33,24 +33,24 @@ describe("scoreGolfDay", () => {
     expect(scoreGolfDay(day({ precipitationProbabilityMax: null })).score).toBe(100);
   });
 
-  it("only penalizes wind past 15 mph", () => {
-    expect(scoreGolfDay(day({ windSpeedMaxMph: 15 })).score).toBe(100);
-    // 100 - (25-15)*2 = 80
-    expect(scoreGolfDay(day({ windSpeedMaxMph: 25 })).score).toBe(80);
+  it("only penalizes wind past 24 km/h", () => {
+    expect(scoreGolfDay(day({ windSpeedMaxKmh: 24 })).score).toBe(100);
+    // 100 - (40-24)*1.25 = 80
+    expect(scoreGolfDay(day({ windSpeedMaxKmh: 40 })).score).toBe(80);
   });
 
-  it("only penalizes temperature outside a 50-90F comfort band", () => {
-    expect(scoreGolfDay(day({ tempMaxF: 50 })).score).toBe(100);
-    expect(scoreGolfDay(day({ tempMaxF: 90 })).score).toBe(100);
-    // 100 - (50-40)*2 = 80
-    expect(scoreGolfDay(day({ tempMaxF: 40 })).score).toBe(80);
-    // 100 - (100-90)*2 = 80
-    expect(scoreGolfDay(day({ tempMaxF: 100 })).score).toBe(80);
+  it("only penalizes temperature outside a 10-30°C comfort band", () => {
+    expect(scoreGolfDay(day({ tempMaxC: 10 })).score).toBe(100);
+    expect(scoreGolfDay(day({ tempMaxC: 30 })).score).toBe(100);
+    // 100 - (10-6)*3.5 = 86
+    expect(scoreGolfDay(day({ tempMaxC: 6 })).score).toBe(86);
+    // 100 - (34-30)*3.5 = 86
+    expect(scoreGolfDay(day({ tempMaxC: 34 })).score).toBe(86);
   });
 
   it("clamps at 0 rather than going negative", () => {
     expect(
-      scoreGolfDay(day({ precipitationProbabilityMax: 100, windSpeedMaxMph: 60, tempMaxF: 10 }))
+      scoreGolfDay(day({ precipitationProbabilityMax: 100, windSpeedMaxKmh: 100, tempMaxC: -20 }))
         .score
     ).toBe(0);
   });
@@ -85,7 +85,7 @@ describe("findNextGoodDay", () => {
     const days = [
       day({ date: "d1", precipitationProbabilityMax: 90 }), // poor
       day({ date: "d2", precipitationProbabilityMax: 0 }), // great, but not the highest-scoring day below
-      day({ date: "d3", weatherCode: 0, precipitationProbabilityMax: 0, windSpeedMaxMph: 0 }),
+      day({ date: "d3", weatherCode: 0, precipitationProbabilityMax: 0, windSpeedMaxKmh: 0 }),
     ];
     const result = findNextGoodDay(days);
     expect(result?.meetsThreshold).toBe(true);

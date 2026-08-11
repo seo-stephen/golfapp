@@ -211,9 +211,9 @@ export default function WeatherPage() {
                     {LABEL_TEXT[nextGoodDay.day.golf.label]} · {nextGoodDay.day.golf.score}/100
                   </div>
                   <div className="text-sm text-cream-400 mt-0.5">
-                    {Math.round(nextGoodDay.day.forecast.tempMaxF)}° /{" "}
-                    {Math.round(nextGoodDay.day.forecast.tempMinF)}°F · wind up to{" "}
-                    {Math.round(nextGoodDay.day.forecast.windSpeedMaxMph)} mph ·{" "}
+                    {Math.round(nextGoodDay.day.forecast.tempMaxC)}° /{" "}
+                    {Math.round(nextGoodDay.day.forecast.tempMinC)}°C · wind up to{" "}
+                    {Math.round(nextGoodDay.day.forecast.windSpeedMaxKmh)} km/h ·{" "}
                     {nextGoodDay.day.forecast.precipitationProbabilityMax ?? 0}% rain chance
                   </div>
                 </div>
@@ -234,7 +234,7 @@ export default function WeatherPage() {
                       <div>
                         <div className="text-sm font-medium">{formatDate(f.date)}</div>
                         <div className="text-xs text-cream-500">
-                          {Math.round(f.tempMaxF)}° / {Math.round(f.tempMinF)}°F ·{" "}
+                          {Math.round(f.tempMaxC)}° / {Math.round(f.tempMinC)}°C ·{" "}
                           {f.precipitationProbabilityMax ?? 0}% rain
                         </div>
                       </div>
