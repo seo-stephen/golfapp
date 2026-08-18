@@ -25,9 +25,14 @@ Then open http://localhost:3000.
 
 ### Using it on your iPhone
 
-The swing camera needs a **secure context**. `http://localhost` qualifies, but
-`http://192.168.x.x` does not — so opening the plain-HTTP dev server from your phone
-over Wi-Fi will load the app but silently block the camera. Two ways around it:
+The swing camera **and GPS distance** need a **secure context**. `http://localhost`
+qualifies, but `http://192.168.x.x` does not — so opening the plain-HTTP dev server from
+your phone over Wi-Fi will load the app but block both.
+
+Geolocation makes this especially confusing: Chrome and Safari report an insecure origin
+as `PERMISSION_DENIED`, i.e. "you didn't grant permission", when permission is granted
+and the *address* is the problem. The app checks `isSecureContext` itself and says so
+rather than passing that misleading error along. Two ways around it:
 
 ```bash
 npm run dev:phone
@@ -35,7 +40,8 @@ npm run dev:phone
 
 That runs `next dev --experimental-https -H 0.0.0.0`, generating a locally trusted
 cert via mkcert. Open `https://<your-mac-ip>:3000` on the phone and accept the
-certificate prompt once.
+certificate prompt once. It needs mkcert on PATH — `brew install mkcert` if the run
+fails to produce a cert.
 
 Alternatively deploy it (Vercel or any host with HTTPS) and use it from there — that
 also makes it work away from your home network, which matters on a course.

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { setCourseHoleGreens } from "@/lib/repo";
+import { geoBlockedReason } from "@/lib/useGeoPosition";
 import { Button } from "@/components/ui";
 import type { Course, LatLon } from "@/types";
 import type { ImportedHole } from "@/lib/osm";
@@ -28,18 +29,28 @@ export function ImportGreensButton({ course }: { course: Course }) {
 
   async function anchorPoint(): Promise<LatLon> {
     if (course.location) return course.location;
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
+
+    // Falling back to the device position, so the same origin/permission traps
+    // apply as on the round screen — report the real reason rather than telling
+    // the user to grant a permission they may well have granted already.
+    const blocked = geoBlockedReason();
+    if (blocked != null) {
       throw new Error(
-        "This course has no saved coordinates and this device can't provide a location."
+        `This course has no saved coordinates, so importing needs your location. ${blocked}`
       );
     }
+
     return new Promise<LatLon>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-        () =>
+        (err) =>
           reject(
             new Error(
-              "This course has no saved coordinates, so importing needs your location — allow it and try again while you're at the course."
+              `This course has no saved coordinates, so importing needs your location. ${
+                err.code === err.PERMISSION_DENIED
+                  ? "Permission was denied — on iOS, an app added to your Home Screen asks separately from Safari."
+                  : "Couldn't get a fix — try again while you're at the course."
+              }`
             )
           ),
         { enableHighAccuracy: false, timeout: 15_000 }
