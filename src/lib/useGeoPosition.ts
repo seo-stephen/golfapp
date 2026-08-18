@@ -127,8 +127,9 @@ function describeGeoError(err: GeolocationPositionError): string {
 }
 
 const SITE_DENIED_MESSAGE =
-  "Location permission denied for this site. On iOS, an app added to your Home Screen " +
-  "asks separately from Safari, so it may need granting again there.";
+  "Location permission was denied, and browsers don't ask twice — reloading won't bring " +
+  "the prompt back. Re-allow it in Safari's settings for this site (an installed Home Screen " +
+  "app asks separately from Safari), or on desktop via the icon at the left of the address bar.";
 
 /**
  * PERMISSION_DENIED is ambiguous: it means either this site was denied, or
@@ -143,13 +144,45 @@ const SITE_DENIED_MESSAGE =
 async function diagnosePermissionDenied(): Promise<string> {
   const siteState = await queryGeolocationPermission();
   if (siteState === "granted") {
-    return (
-      "This site has location permission, but the browser was still refused — so " +
-      "something above it is blocking. On macOS check System Settings > Privacy & " +
-      "Security > Location Services (and that your browser is enabled in that list)."
-    );
+    return `This site has location permission, but the request was still refused, so something above it is blocking. ${osLocationHint()}`;
   }
   return SITE_DENIED_MESSAGE;
+}
+
+const IOS_APP_NAME = "BogeyBoys";
+
+/**
+ * Where to look in OS settings — which differs enough per platform that a
+ * single message is actively unhelpful. An installed iOS web app gets its own
+ * entry under Location Services, separate from Safari's, so it needs pointing at
+ * specifically or the user hunts through Safari's settings and finds nothing
+ * wrong there.
+ */
+function osLocationHint(): string {
+  if (isIOS()) {
+    const where = isStandaloneApp()
+      ? `find ${IOS_APP_NAME} in the app list and set it to "While Using the App" — an app added to your Home Screen has its own entry there, separate from Safari`
+      : 'set Safari Websites to "While Using the App"';
+    return `On iOS: Settings > Privacy & Security > Location Services — check it's switched on, then ${where}.`;
+  }
+  return "On macOS: System Settings > Privacy & Security > Location Services — check it's on and your browser is enabled in that list.";
+}
+
+function isIOS(): boolean {
+  if (typeof navigator === "undefined") return false;
+  // iPadOS reports itself as MacIntel, so the touch-point count is what
+  // separates an iPad from an actual Mac.
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
+}
+
+/** True inside an installed Home Screen app rather than a browser tab. */
+function isStandaloneApp(): boolean {
+  if (typeof window === "undefined") return false;
+  const iosStandalone = (navigator as Navigator & { standalone?: boolean }).standalone;
+  return iosStandalone === true || window.matchMedia("(display-mode: standalone)").matches;
 }
 
 async function queryGeolocationPermission(): Promise<PermissionState | null> {
