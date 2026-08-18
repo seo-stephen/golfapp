@@ -181,6 +181,18 @@ Tracking is **off until you start it**, because `watchPosition` with high accura
 the GPS radio running and a four-hour round is a long time to hold a phone awake. Like
 the swing camera, it needs a secure context — `npm run dev:phone` covers that.
 
+**Two iOS permission traps, both of which cost real debugging time.** First, browsers
+report an insecure origin as `PERMISSION_DENIED`, so a plain-http page reads as "you
+denied permission" when permission is fine and the address is not; `geoBlockedReason()`
+checks `isSecureContext` up front so the app says which it is. Second, WebKit scopes
+geolocation permission to the *browsing session* rather than persisting it, so a denial
+is usually temporary and clears when the app is relaunched — meaning it can start working
+again with no settings change at all. Do **not** try to tell that apart with
+`navigator.permissions.query()`: Safari's implementation is unreliable for geolocation
+and will happily report `granted` during a refusal, which is exactly how this app once
+ended up blaming macOS settings on an iPhone. iOS is answered from platform behaviour
+instead.
+
 Once greens are stored, distance works with no signal; only the initial OSM import needs
 the network. OSM data is ODbL, so anywhere imported data surfaces carries
 `© OpenStreetMap contributors`.

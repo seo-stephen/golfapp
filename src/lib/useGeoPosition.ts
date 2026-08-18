@@ -132,16 +132,29 @@ const SITE_DENIED_MESSAGE =
   "app asks separately from Safari), or on desktop via the icon at the left of the address bar.";
 
 /**
- * PERMISSION_DENIED is ambiguous: it means either this site was denied, or
- * something above the browser refused it. On macOS, System Settings > Privacy &
- * Security > Location Services being off for the browser looks identical through
- * the Geolocation API — which is exactly the case where a user checks the site
- * permission, finds it granted, and is told otherwise.
+ * PERMISSION_DENIED is ambiguous: this site was denied, or something above the
+ * browser refused it. Distinguishing them is platform-specific.
  *
- * The Permissions API separates them: "granted" alongside a denial means the
- * block is upstream of this site, so the message should point at the OS instead.
+ * On iOS neither half of the obvious approach holds. WebKit scopes geolocation
+ * permission to the browsing session rather than persisting it, so a denial is
+ * usually temporary and clears on relaunch — and Safari's Permissions API is
+ * unreliable for geolocation, reporting states that disagree with the real one.
+ * Trusting a "granted" reading there produced a confidently wrong message
+ * blaming OS settings for what was really a session-scoped denial, so iOS is
+ * answered from platform behaviour instead of from that query.
+ *
+ * Elsewhere the Permissions API is dependable enough to be worth asking:
+ * "granted" alongside a denial does mean the block sits above this site.
  */
 async function diagnosePermissionDenied(): Promise<string> {
+  if (isIOS()) {
+    return (
+      "Location was refused for this session. iOS doesn't remember the answer for long — " +
+      "fully close the app from the app switcher and reopen it, and it should ask again. " +
+      `If it never asks: ${osLocationHint()}`
+    );
+  }
+
   const siteState = await queryGeolocationPermission();
   if (siteState === "granted") {
     return `This site has location permission, but the request was still refused, so something above it is blocking. ${osLocationHint()}`;
